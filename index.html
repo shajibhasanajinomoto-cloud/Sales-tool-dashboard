@@ -4,7 +4,9 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Sales Tool Dashboard</title>
+<!-- Excel Export Library -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<!-- HTML to Image/JPG Library -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 <style>
@@ -308,6 +310,21 @@
   .matrix-data-table tr:nth-child(even) { background: var(--paper-light); }
   .matrix-data-table td.item-total-col { font-weight: 700; background: #FFFDF9; color: var(--ink); border-left: 1.5px solid var(--line); }
 
+  /* New Dynamic Delete Action Style */
+  .cell-name-wrapper { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .item-delete-inline-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 2px 6px;
+    border-radius: 3px;
+    transition: background 0.15s ease;
+    opacity: 0.4;
+  }
+  .matrix-data-table tr:hover .item-delete-inline-btn { opacity: 1; }
+  .item-delete-inline-btn:hover { background: rgba(217, 72, 58, 0.15); opacity: 1; }
+
   /* Segment Theme Coloring Rules */
   .segment-sales-tool .cat-header-label-badge, .segment-sales-tool .matrix-data-table th { background-color: var(--color-sales-tool); }
   .segment-promo .cat-header-label-badge, .segment-promo .matrix-data-table th { background-color: var(--color-promo); }
@@ -387,6 +404,7 @@
 <body>
 <div class="wrap">
 
+  <!-- HEADER -->
   <header>
     <div class="header-text">
       <h1>Sales Tool Dashboard</h1>
@@ -394,6 +412,7 @@
     <div class="header-actions">
       <button class="reset-btn" onclick="clearAllData()">Reset Database</button>
       
+      <!-- Red Themed Download JPG Button -->
       <button class="jpg-btn" onclick="exportToJPG()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
         Download JPG
@@ -406,8 +425,10 @@
     </div>
   </header>
 
+  <!-- SNAPSHOT TARGET WRAPPER -->
   <div class="snapshot-target" id="dashboardSnapshotArea">
     
+    <!-- COUNTERS ROW -->
     <div class="top-counters">
       <div class="counter-box sales-tool">
         <div class="counter-main-data">
@@ -442,6 +463,7 @@
       </div>
     </div>
 
+    <!-- RED THEMED CHANNELS FILTER CHIPS -->
     <div class="chips" id="chips">
       <div class="chip active" data-filter="all">All Channels</div>
       <div class="chip" data-filter="HQ">HQ</div>
@@ -451,12 +473,15 @@
       <div class="chip" data-filter="Outside Dhaka">Outside Dhaka</div>
     </div>
 
+    <!-- MATRIX DASHBOARD -->
     <section class="panel">
       <h2>Stock Analysis Matrix Dashboard</h2>
       <div class="matrix-container-layout" id="matrixLayoutEngine"></div>
     </section>
 
-  </div> <div style="display: grid; grid-template-columns: 1.6fr 1fr; gap: 18px; align-items: start;" id="bottomGrid">
+  </div> <!-- /snapshot-target -->
+
+  <div style="display: grid; grid-template-columns: 1.6fr 1fr; gap: 18px; align-items: start;" id="bottomGrid">
     <section class="panel">
       <h2>Item Stock Registration</h2>
       <form class="add-form" id="addForm">
@@ -504,7 +529,7 @@ const CATS = [
   { key:'sort',    label:'Sort · Seiri',          color:'var(--sort)' },
   { key:'order',   label:'Set in Order · Seiton', color:'var(--order)' },
   { key:'shine',   label:'Shine · Seiso',         color:'var(--shine)' },
-  { key:'std',     label:'Standardise · Seiketsu',color:'var(--std)' },
+  { key:'std',     label:'Standardise · Seiketsu',color(--std)' },
   { key:'sustain', label:'Sustain · Shitsuke',    color:'var(--sustain)' },
 ];
 
@@ -579,6 +604,16 @@ function clearAllData() {
     localStorage.removeItem('sales-tool-chk');
     renderAll();
     alert("All existing data has been successfully cleared!");
+  }
+}
+
+/* New Individual Segment Deletion System */
+function deleteSegmentItem(itemName, category) {
+  if (confirm(`Are you sure you want to remove "${itemName}" from the ${category} category completely?`)) {
+    inventory = inventory.filter(i => !(i.name.trim() === itemName && i.category === category));
+    calculateCounters();
+    renderDashboardMatrix();
+    saveInventory();
   }
 }
 
@@ -666,7 +701,12 @@ function renderDashboardMatrix(){
 
     let trContent = outputRows.map(r => `
       <tr>
-        <td>${escapeHtml(r.name)}</td>
+        <td>
+          <div class="cell-name-wrapper">
+            <span>${escapeHtml(r.name)}</span>
+            <button class="item-delete-inline-btn" onclick="deleteSegmentItem('${escapeHtml(r.name)}', '${cat}')" title="Delete Product">🗑️</button>
+          </div>
+        </td>
         <td>${r['HQ'] || ''}</td>
         <td>${r['South Depot'] || ''}</td>
         <td>${r['North Depot'] || ''}</td>
