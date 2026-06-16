@@ -319,9 +319,10 @@
     border-radius: 3px;
     transition: background 0.15s ease;
     opacity: 0.4;
-    display: none; /* Default Hidden for Visitors */
+    display: none; /* Hidden by default for visitors */
   }
-  .admin-mode .matrix-data-table tr:hover .item-delete-inline-btn { display: inline-block; }
+  .admin-mode .matrix-data-table tr:hover .item-delete-inline-btn { display: inline-block; opacity: 1; }
+  .item-delete-inline-btn:hover { background: rgba(217, 72, 58, 0.15); opacity: 1; }
 
   /* Segment Theme Coloring Rules */
   .segment-sales-tool .cat-header-label-badge, .segment-sales-tool .matrix-data-table th { background-color: var(--color-sales-tool); }
@@ -424,12 +425,12 @@
 
   .empty-note { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--ink-soft); text-align: center; padding: 40px; border: 1px dashed var(--line); background: #fff; border-radius: 4px; }
   .footnote{ margin-top: 20px; font-family:'IBM Plex Mono', monospace; font-size: 11px; color: var(--ink-soft); text-align:center; }
-  
-  /* ADMIN ONLY INTERFACE CONTROLS */
+
+  /* SECURITY MODE ACTION CONTROLS */
   .admin-only { display: none !important; }
-  .admin-mode .admin-only { display: grid !important; }
-  .admin-mode .admin-only.reset-btn { display: inline-flex !important; }
-  .admin-mode .admin-only.bulk-upload-zone { display: block !important; }
+  .admin-mode .admin-only { display: block !important; }
+  .admin-mode button.admin-only { display: inline-flex !important; }
+  .admin-mode form.admin-only { display: grid !important; }
 </style>
 </head>
 <body>
@@ -505,7 +506,7 @@
     </section>
 
   </div> 
-  
+
   <div style="display: grid; grid-template-columns: 1.6fr 1fr; gap: 18px; align-items: start;" id="bottomGrid">
     <div style="display: flex; flex-direction: column; gap: 18px;">
       <section class="panel admin-only">
@@ -561,8 +562,8 @@
 </div>
 
 <script>
-// HARDCODED MASTER DATA SHARED LOGISTIC MATRIX 
-const FIXED_INVENTORY_DATA = [
+// MASTER DATA REPOSITORY (Ekhane data set thakbe jano shob visitor dekte pare)
+const HARDCODED_INVENTORY_DATA = [
   { id: '1', name: 'Uniform Pack', category: 'Sales Tool', depot: 'HQ', qty: 120, condition: 'New' },
   { id: '2', name: 'Uniform Pack', category: 'Sales Tool', depot: 'South Depot', qty: 2, condition: 'Working' },
   { id: '3', name: 'Uniform Pack', category: 'Sales Tool', depot: 'North Depot', qty: 3, condition: 'New' },
@@ -619,14 +620,14 @@ const CATEGORY_STYLES = {
   'Asset': { class: 'segment-asset', hex: '#8FA842' },
 };
 
-let inventory = [...FIXED_INVENTORY_DATA];
+let inventory = [];
 let checklist = JSON.parse(JSON.stringify(DEFAULT_CHECKLIST));
 let currentChannelFilter = 'all';
 let openCards = new Set(['sort']);
 let isAdmin = false;
 
-// Check URL parameter to toggle edit panels (?auth=admin)
-function checkAuthMode() {
+// URL parameter checking tool (?auth=admin)
+function checkAuthSecurity() {
   const urlParams = new URLSearchParams(window.location.search);
   if (urlParams.get('auth') === 'admin') {
     isAdmin = true;
@@ -637,11 +638,142 @@ function checkAuthMode() {
   }
 }
 
+async function loadData(){
+  try{
+    // Try to load any admin modifications from localStorage first
+    const localInv = localStorage.getItem('sales-tool-inv-v2');
+    const localChk = localStorage.getItem('sales-tool-chk-v2');
+    
+    if(localInv) {
+      inventory = JSON.parse(localInv);
+    } else {
+      // If no local modifications exist, fall back to the hardcoded repository data
+      inventory = [...HARDCODED_INVENTORY_DATA];
+    }
+    
+    if(localChk) {
+      checklist = JSON.parse(localChk);
+    } else {
+      checklist = JSON.parse(JSON.stringify(DEFAULT_CHECKLIST));
+    }
+  }catch(e){ 
+    console.warn(e);
+    inventory = [...HARDCODED_INVENTORY_DATA];
+  }
+  renderAll();
+}
+
+async function saveInventory(){
+  if(!isAdmin) return;
+  try{
+    localStorage.setItem('sales-tool-inv-v2', JSON.stringify(inventory));
+    touchSaved();
+  }catch(e){}
+}
+
+async function saveChecklist(){
+  if(!isAdmin) return;
+  try{
+    localStorage.setItem('sales-tool-chk-v2', JSON.stringify(checklist));
+    touchSaved();
+  }catch(e){}
+}
+
+function clearAllData() {
+  if(!isAdmin) return;
+  if (confirm("Are you sure you want to delete all existing data and reset to original default stocks?")) {
+    inventory = [...HARDCODED_INVENTORY_DATA];
+    checklist = JSON.parse(JSON.stringify(DEFAULT_CHECKLIST));
+    localStorage.removeItem('sales-tool-inv-v2');
+    localStorage.removeItem('sales-tool-chk-v2');
+    renderAll();
+    alert("Dashboard has been reset to base data deployment parameters.");
+  }
+}
+
+function deleteSegmentItem(itemName, category) {
+  if(!isAdmin) return;
+  if (confirm(`Are you sure you want to remove "${itemName}" from the ${category} category completely?`)) {
+    inventory = inventory.filter(i => !(i.name.trim() === itemName && i.category === category));
+    calculateCounters();
+    renderDashboardMatrix();
+    saveInventory();
+  }
+}
+
+function handleBulkExcelUpload(event) {
+  if(!isAdmin) return;
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const data = new Uint8Array(e.target.result);
+      const workbook = XLSX.read(data, { type: 'array' });
+      const firstSheetName = workbook.SheetNames[0];
+      const worksheet = workbook.Sheets[firstSheetName];
+      const rawRows = XLSX.utils.sheet_to_json(worksheet);
+      
+      if (rawRows.length === 0) {
+        alert("The selected Excel file is empty!");
+        return;
+      }
+
+      let insertedCount = 0;
+      rawRows.reverse().forEach(row => {
+        const name = row['Item Name'] || row['item name'] || row['Name'] || row['name'];
+        let category = row['Category'] || row['category'];
+        let depot = row['Depot'] || row['depot'] || row['Hub'];
+        const qty = row['Qty'] || row['qty'] || row['Quantity'] || row['quantity'] || 0;
+        const condition = row['Condition'] || row['condition'] || 'New';
+
+        if (name && category && depot) {
+          category = category.toString().trim();
+          if(category.toLowerCase() === 'sales tool') category = 'Sales Tool';
+          if(category.toLowerCase() === 'promotional item' || category.toLowerCase() === 'promo') category = 'Promotional Item';
+          if(category.toLowerCase() === 'give-away' || category.toLowerCase() === 'giveaway') category = 'Give-Away';
+          if(category.toLowerCase() === 'asset') category = 'Asset';
+
+          depot = depot.toString().trim();
+          if(depot.toLowerCase() === 'hq') depot = 'HQ';
+          if(depot.toLowerCase() === 'south depot') depot = 'South Depot';
+          if(depot.toLowerCase() === 'north depot') depot = 'North Depot';
+          if(depot.toLowerCase() === 'ctg depot') depot = 'CTG Depot';
+          if(depot.toLowerCase() === 'outside dhaka') depot = 'Outside Dhaka';
+
+          inventory.unshift({
+            id: 'item-bulk-' + Date.now() + '-' + Math.random().toString(36).substr(2, 5),
+            name: name.toString().trim(),
+            category: category,
+            depot: depot,
+            qty: Number(qty) || 0,
+            condition: condition.toString().trim(),
+            flagged: false
+          });
+          insertedCount++;
+        }
+      });
+
+      alert(`Bulk Import Complete! Successfully added: ${insertedCount} rows.`);
+      calculateCounters();
+      renderDashboardMatrix();
+      saveInventory();
+      event.target.value = '';
+    } catch (err) {
+      alert("Error parsing Excel file.");
+    }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function touchSaved(){ document.getElementById('lastSaved').textContent = new Date().toLocaleDateString() + ' (Synced Live)'; }
+
 function renderAll(){
   calculateCounters();
   renderDashboardMatrix();
   renderChecklist();
-  document.getElementById('lastSaved').textContent = new Date().toLocaleDateString() + ' (Synced Live)';
+  touchSaved();
 }
 
 function calculateCounters(){
@@ -794,7 +926,7 @@ function renderChecklist(){
 }
 
 function toggleCard(key){ if(openCards.has(key)) openCards.delete(key); else openCards.add(key); renderChecklist(); }
-function toggleCheck(cat, id){ if(!isAdmin) return; const item = checklist[cat].find(i=>i.id===id); if(item){ item.done = !item.done; } renderChecklist(); }
+function toggleCheck(cat, id){ if(!isAdmin) return; const item = checklist[cat].find(i=>i.id===id); if(item){ item.done = !item.done; } renderChecklist(); saveChecklist(); }
 function escapeHtml(str){ const div = document.createElement('div'); div.textContent = str; return div.innerHTML; }
 
 document.getElementById('addForm').addEventListener('submit', (e) => {
@@ -814,26 +946,8 @@ document.getElementById('addForm').addEventListener('submit', (e) => {
 
   document.getElementById('f-name').value = '';
   document.getElementById('f-qty').value = '1';
-  calculateCounters(); renderDashboardMatrix();
+  calculateCounters(); renderDashboardMatrix(); saveInventory();
 });
-
-function deleteSegmentItem(itemName, category) {
-  if(!isAdmin) return;
-  if (confirm(`Are you sure you want to remove "${itemName}"?`)) {
-    inventory = inventory.filter(i => !(i.name.trim() === itemName && i.category === category));
-    calculateCounters();
-    renderDashboardMatrix();
-  }
-}
-
-function clearAllData() {
-  if(!isAdmin) return;
-  if (confirm("Reset completely?")) {
-    inventory = [];
-    checklist = JSON.parse(JSON.stringify(DEFAULT_CHECKLIST));
-    renderAll();
-  }
-}
 
 document.getElementById('chips').addEventListener('click', (e) => {
   const chip = e.target.closest('.chip'); if(!chip) return;
@@ -856,20 +970,43 @@ function exportToExcel(){
 function exportToJPG() {
   const targetArea = document.getElementById('dashboardSnapshotArea');
   const options = { scale: 2, backgroundColor: '#EFE7D8', useCORS: true, logging: false };
+
   html2canvas(targetArea, options).then(canvas => {
     const imgData = canvas.toDataURL('image/jpeg', 0.95);
     const downloadLink = document.createElement('a');
     downloadLink.href = imgData;
-    downloadLink.download = `Sales_Tool_Dashboard_Snapshot.jpg`;
+    downloadLink.download = `Sales_Tool_Dashboard_Snapshot_${new Date().toISOString().slice(0,10)}.jpg`;
     document.body.appendChild(downloadLink);
     downloadLink.click();
     document.body.removeChild(downloadLink);
+  }).catch(err => {
+    alert("An error occurred while downloading the image.");
   });
 }
 
-// Initialize
-checkAuthMode();
-renderAll();
+// Drag and drop setup for Admin Bulk Zone
+const dropZone = document.querySelector('.bulk-upload-zone');
+if(dropZone) {
+  ['dragenter', 'dragover'].forEach(eventName => {
+    dropZone.addEventListener(eventName, (e) => { e.preventDefault(); if(isAdmin) dropZone.style.background = '#fff'; }, false);
+  });
+  ['dragleave', 'drop'].forEach(eventName => {
+    dropZone.addEventListener(eventName, (e) => { e.preventDefault(); dropZone.style.background = 'rgba(255,255,255,0.4)'; }, false);
+  });
+  dropZone.addEventListener('drop', (e) => {
+    if(!isAdmin) return;
+    const dt = e.dataTransfer;
+    const files = dt.files;
+    if(files.length) {
+      document.getElementById('excelFileInput').files = files;
+      handleBulkExcelUpload({ target: { files: files } });
+    }
+  }, false);
+}
+
+// RUN SEED SECURITY CHECK
+checkAuthSecurity();
+loadData();
 </script>
 </body>
 </html>
