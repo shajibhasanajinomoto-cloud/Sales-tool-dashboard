@@ -564,20 +564,22 @@
 <script>
 // MASTER DATA REPOSITORY (Ekhane data set thakbe jano shob visitor dekte pare)
 const HARDCODED_INVENTORY_DATA = [
-  { id: '1', name: 'Uniform', category: 'Sales Tool', depot: 'HQ', qty: 120, condition: 'New' },
-  { id: '2', name: 'Uniform', category: 'Sales Tool', depot: 'South Depot', qty: 2, condition: 'Working' },
-  { id: '3', name: 'Uniform', category: 'Sales Tool', depot: 'North Depot', qty: 3, condition: 'New' },
-  { id: '4', name: 'Paper Hanger', category: 'Sales Tool', depot: 'HQ', qty: 48, condition: 'New' },
-  { id: '5', name: 'Paper Hanger', category: 'Sales Tool', depot: 'South Depot', qty: 2, condition: 'Used' },
-  { id: '6', name: 'Invoice', category: 'Sales Tool', depot: 'HQ', qty: 32, condition: 'New' },
-  { id: '7', name: 'Invoice', category: 'Sales Tool', depot: 'South Depot', qty: 2, condition: 'Working' },
-  { id: '14', name: 'Gift', category: 'Promotional Item', depot: 'HQ', qty: 31, condition: 'New' },
-  { id: '16', name: 'Hanger Box', category: 'Give-Away', depot: 'HQ', qty: 19, condition: 'New' },
-  { id: '17', name: 'Festoon Banner', category: 'Give-Away', depot: 'HQ', qty: 1, condition: 'New' },
-  { id: '18', name: 'TV', category: 'Asset', depot: 'HQ', qty: 43, condition: 'New' },
-  { id: '19', name: 'Monitor', category: 'Asset', depot: 'Outside Dhaka', qty: 1, condition: 'Working' }
+  { id: 'ex-1', name: 'Gift', category: 'Promotional Item', depot: 'HQ', qty: 50, condition: 'Unused' },
+  { id: 'ex-2', name: 'TV', category: 'Asset', depot: 'HQ', qty: 4, condition: 'New' },
+  { id: 'ex-3', name: 'Sample', category: 'Give-Away', depot: 'HQ', qty: 5, condition: 'New' },
+  { id: 'ex-4', name: 'T-Shirt', category: 'Promotional Item', depot: 'HQ', qty: 20, condition: 'New' },
+  { id: 'ex-5', name: 'Unifrom', category: 'Sales Tool', depot: 'HQ', qty: 336, condition: 'New' },
+  { id: 'ex-6', name: 'Invoice', category: 'Sales Tool', depot: 'Outside Dhaka', qty: 238, condition: 'New' },
+  { id: 'ex-7', name: 'Invoice', category: 'Sales Tool', depot: 'CTG Depot', qty: 5, condition: 'New' },
+  { id: 'ex-8', name: 'Invoice', category: 'Sales Tool', depot: 'North Depot', qty: 7, condition: 'New' },
+  { id: 'ex-9', name: 'Invoice', category: 'Sales Tool', depot: 'South Depot', qty: 35, condition: 'New' },
+  { id: 'ex-10', name: 'Invoice', category: 'Sales Tool', depot: 'HQ', qty: 179, condition: 'New' },
+  { id: 'ex-11', name: 'Paper Hanger', category: 'Sales Tool', depot: 'Outside Dhaka', qty: 516, condition: 'New' },
+  { id: 'ex-12', name: 'Paper Hanger', category: 'Sales Tool', depot: 'CTG Depot', qty: 50, condition: 'New' },
+  { id: 'ex-13', name: 'Paper Hanger', category: 'Sales Tool', depot: 'North Depot', qty: 200, condition: 'New' },
+  { id: 'ex-14', name: 'Paper Hanger', category: 'Sales Tool', depot: 'South Depot', qty: 220, condition: 'New' },
+  { id: 'ex-15', name: 'Paper Hanger', category: 'Sales Tool', depot: 'HQ', qty: 4125, condition: 'New' }
 ];
-
 const CATS = [
   { key:'sort',    label:'Sort · Seiri',          color:'var(--sort)' },
   { key:'order',   label:'Set in Order · Seiton', color:'var(--order)' },
