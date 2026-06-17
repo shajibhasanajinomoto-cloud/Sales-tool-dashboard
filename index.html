@@ -35,6 +35,7 @@
     --color-promo: #E2953B;        
     --color-giveaway: #843B8B;     
     --color-asset: #8FA842;        
+    --color-old-sales-tool: #7A828A;
   }
 
   *{ box-sizing: border-box; }
@@ -138,11 +139,12 @@
   /* ---------- DYNAMIC COUNTERS GRID ---------- */
   .top-counters {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 14px;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
   }
-  @media (max-width: 1100px) { .top-counters { grid-template-columns: repeat(2, 1fr); } }
-  @media (max-width: 600px) { .top-counters { grid-template-columns: 1fr; } }
+  @media (max-width: 1200px) { .top-counters { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 768px) { .top-counters { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 480px) { .top-counters { grid-template-columns: 1fr; } }
   
   .counter-box {
     background: var(--paper-light);
@@ -161,6 +163,7 @@
   .counter-box.promo { border-left-color: var(--color-promo); }
   .counter-box.giveaway { border-left-color: var(--color-giveaway); }
   .counter-box.asset { border-left-color: var(--color-asset); }
+  .counter-box.old-sales-tool { border-left-color: var(--color-old-sales-tool); }
 
   .counter-main-data {
     display: flex;
@@ -329,6 +332,7 @@
   .segment-promo .cat-header-label-badge, .segment-promo .matrix-data-table th { background-color: var(--color-promo); }
   .segment-giveaway .cat-header-label-badge, .segment-giveaway .matrix-data-table th { background-color: var(--color-giveaway); }
   .segment-asset .cat-header-label-badge, .segment-asset .matrix-data-table th { background-color: var(--color-asset); }
+  .segment-old-sales-tool .cat-header-label-badge, .segment-old-sales-tool .matrix-data-table th { background-color: var(--color-old-sales-tool); }
 
   /* ---------- DATA REGISTRATION INPUTS ---------- */
   form.add-form{
@@ -489,6 +493,14 @@
         </div>
         <div class="inner-sub-metrics" id="subContainer-Asset"></div>
       </div>
+
+      <div class="counter-box old-sales-tool">
+        <div class="counter-main-data">
+          <span class="counter-title">Old Sales Tool Total</span>
+          <span class="counter-value" id="countOldSalesTool">0</span>
+        </div>
+        <div class="inner-sub-metrics" id="subContainer-Old-Sales-Tool"></div>
+      </div>
     </div>
 
     <div class="chips" id="chips">
@@ -518,6 +530,7 @@
             <option>Promotional Item</option>
             <option>Give-Away</option>
             <option>Asset</option>
+            <option>Old Sales Tool</option>
           </select>
           <select id="f-depot">
             <option>HQ</option>
@@ -562,7 +575,7 @@
 </div>
 
 <script>
-// MASTER DATA REPOSITORY (Updated precisely from uploaded dataset)
+// MASTER DATA REPOSITORY
 const HARDCODED_INVENTORY_DATA = [
   { id: 'ex-1', name: 'Gift', category: 'Promotional Item', depot: 'HQ', qty: 50, condition: 'Unused' },
   { id: 'ex-2', name: 'TV', category: 'Asset', depot: 'HQ', qty: 4, condition: 'New' },
@@ -614,6 +627,7 @@ const CATEGORY_STYLES = {
   'Promotional Item': { class: 'segment-promo', hex: '#E2953B' },
   'Give-Away': { class: 'segment-giveaway', hex: '#843B8B' },
   'Asset': { class: 'segment-asset', hex: '#8FA842' },
+  'Old Sales Tool': { class: 'segment-old-sales-tool', hex: '#7A828A' },
 };
 
 let inventory = [];
@@ -727,6 +741,7 @@ function handleBulkExcelUpload(event) {
           if(category.toLowerCase() === 'promotional item' || category.toLowerCase() === 'promo') category = 'Promotional Item';
           if(category.toLowerCase() === 'give-away' || category.toLowerCase() === 'giveaway') category = 'Give-Away';
           if(category.toLowerCase() === 'asset') category = 'Asset';
+          if(category.toLowerCase() === 'old sales tool') category = 'Old Sales Tool';
 
           depot = depot.toString().trim();
           if(depot.toLowerCase() === 'hq') depot = 'HQ';
@@ -770,8 +785,8 @@ function renderAll(){
 }
 
 function calculateCounters(){
-  let catTotals = { 'Sales Tool': 0, 'Promotional Item': 0, 'Give-Away': 0, 'Asset': 0 };
-  let dynamicSubMaps = { 'Sales Tool': {}, 'Promotional Item': {}, 'Give-Away': {}, 'Asset': {} };
+  let catTotals = { 'Sales Tool': 0, 'Promotional Item': 0, 'Give-Away': 0, 'Asset': 0, 'Old Sales Tool': 0 };
+  let dynamicSubMaps = { 'Sales Tool': {}, 'Promotional Item': {}, 'Give-Away': {}, 'Asset': {}, 'Old Sales Tool': {} };
   
   inventory.forEach(i => {
     if (currentChannelFilter === 'all' || i.depot === currentChannelFilter) {
@@ -792,8 +807,9 @@ function calculateCounters(){
   document.getElementById('countPromo').textContent = catTotals['Promotional Item'];
   document.getElementById('countGiveaway').textContent = catTotals['Give-Away'];
   document.getElementById('countAsset').textContent = catTotals['Asset'];
+  document.getElementById('countOldSalesTool').textContent = catTotals['Old Sales Tool'];
 
-  const targetCategories = ['Sales Tool', 'Promotional Item', 'Give-Away', 'Asset'];
+  const targetCategories = ['Sales Tool', 'Promotional Item', 'Give-Away', 'Asset', 'Old Sales Tool'];
   targetCategories.forEach(cat => {
     const domId = 'subContainer-' + cat.replace(/\s+/g, '-');
     const container = document.getElementById(domId);
@@ -817,7 +833,7 @@ function calculateCounters(){
 
 function renderDashboardMatrix(){
   const container = document.getElementById('matrixLayoutEngine');
-  const distinctCategories = ['Sales Tool', 'Promotional Item', 'Give-Away', 'Asset'];
+  const distinctCategories = ['Sales Tool', 'Promotional Item', 'Give-Away', 'Asset', 'Old Sales Tool'];
   
   if(inventory.length === 0){
     container.innerHTML = `<div class="empty-note">No items available.</div>`;
