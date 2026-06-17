@@ -562,13 +562,13 @@
 </div>
 
 <script>
-// MASTER DATA REPOSITORY (Ekhane data set thakbe jano shob visitor dekte pare)
+// MASTER DATA REPOSITORY (Updated precisely from uploaded dataset)
 const HARDCODED_INVENTORY_DATA = [
   { id: 'ex-1', name: 'Gift', category: 'Promotional Item', depot: 'HQ', qty: 50, condition: 'Unused' },
-  { id: 'ex-2', name: 'TV-damaged', category: 'Asset', depot: 'HQ', qty: 4, condition: 'Unused' },
+  { id: 'ex-2', name: 'TV', category: 'Asset', depot: 'HQ', qty: 4, condition: 'New' },
   { id: 'ex-3', name: 'Sample', category: 'Give-Away', depot: 'HQ', qty: 5, condition: 'New' },
   { id: 'ex-4', name: 'T-Shirt', category: 'Promotional Item', depot: 'HQ', qty: 20, condition: 'New' },
-  { id: 'ex-5', name: 'Uniform', category: 'Sales Tool', depot: 'HQ', qty: 336, condition: 'New' },
+  { id: 'ex-5', name: 'Unifrom', category: 'Sales Tool', depot: 'HQ', qty: 336, condition: 'New' },
   { id: 'ex-6', name: 'Invoice', category: 'Sales Tool', depot: 'Outside Dhaka', qty: 238, condition: 'New' },
   { id: 'ex-7', name: 'Invoice', category: 'Sales Tool', depot: 'CTG Depot', qty: 5, condition: 'New' },
   { id: 'ex-8', name: 'Invoice', category: 'Sales Tool', depot: 'North Depot', qty: 7, condition: 'New' },
@@ -579,8 +579,8 @@ const HARDCODED_INVENTORY_DATA = [
   { id: 'ex-13', name: 'Paper Hanger', category: 'Sales Tool', depot: 'North Depot', qty: 200, condition: 'New' },
   { id: 'ex-14', name: 'Paper Hanger', category: 'Sales Tool', depot: 'South Depot', qty: 220, condition: 'New' },
   { id: 'ex-15', name: 'Paper Hanger', category: 'Sales Tool', depot: 'HQ', qty: 4125, condition: 'New' }
-  { id: 'ex-16', name: 'Aji-Sal Hanger-Old', category: 'Sales Tool', depot: 'HQ', qty: 4125, condition: 'Unused' }
 ];
+
 const CATS = [
   { key:'sort', label:'Sort', color:'var(--sort)' },
   { key:'order', label:'Set in Order', color:'var(--order)' },
@@ -622,7 +622,6 @@ let currentChannelFilter = 'all';
 let openCards = new Set(['sort']);
 let isAdmin = false;
 
-// URL parameter checking tool (?auth=admin)
 function checkAuthSecurity() {
   const urlParams = new URLSearchParams(window.location.search);
   if (urlParams.get('auth') === 'admin') {
@@ -636,14 +635,12 @@ function checkAuthSecurity() {
 
 async function loadData(){
   try{
-    // Try to load any admin modifications from localStorage first
     const localInv = localStorage.getItem('sales-tool-inv-v2');
     const localChk = localStorage.getItem('sales-tool-chk-v2');
     
     if(localInv) {
       inventory = JSON.parse(localInv);
     } else {
-      // If no local modifications exist, fall back to the hardcoded repository data
       inventory = [...HARDCODED_INVENTORY_DATA];
     }
     
@@ -846,6 +843,15 @@ function renderDashboardMatrix(){
 
     const outputRows = Object.values(processedMap);
 
+    if (outputRows.length === 0) {
+      return `
+        <div class="cat-group-segment ${styleCfg.class}" style="margin-bottom:8px;">
+          <div class="cat-header-label-badge">${cat}</div>
+          <div style="padding:15px; text-align:center; font-size:12px; color:var(--ink-soft); background:#fff;">No data segment matching selected filter</div>
+        </div>
+      `;
+    }
+
     let trContent = outputRows.map(r => `
       <tr>
         <td>
@@ -854,18 +860,14 @@ function renderDashboardMatrix(){
             <button class="item-delete-inline-btn" onclick="deleteSegmentItem('${escapeHtml(r.name)}', '${cat}')" title="Delete Product">🗑️</button>
           </div>
         </td>
-        <td>${r['HQ'] || ''}</td>
-        <td>${r['South Depot'] || ''}</td>
-        <td>${r['North Depot'] || ''}</td>
-        <td>${r['CTG Depot'] || ''}</td>
-        <td>${r['Outside Dhaka'] || ''}</td>
+        <td>${r['HQ'] || '-'}</td>
+        <td>${r['South Depot'] || '-'}</td>
+        <td>${r['North Depot'] || '-'}</td>
+        <td>${r['CTG Depot'] || '-'}</td>
+        <td>${r['Outside Dhaka'] || '-'}</td>
         <td class="item-total-col">${r.subtotal}</td>
       </tr>
     `).join('');
-
-    if(outputRows.length === 0){
-      trContent = `<tr><td style="color:var(--ink-soft); font-style:italic;">No active stocks in selected channel filter</td><td></td><td></td><td></td><td></td><td></td><td class="item-total-col">-</td></tr>`;
-    }
 
     return `
       <div class="cat-group-segment ${styleCfg.class}">
@@ -873,16 +875,18 @@ function renderDashboardMatrix(){
         <table class="matrix-data-table">
           <thead>
             <tr>
-              <th>Item Segment Name</th>
+              <th>Item Variant Profile</th>
               <th>HQ</th>
               <th>South Depot</th>
               <th>North Depot</th>
               <th>CTG Depot</th>
               <th>Outside Dhaka</th>
-              <th>Item Total</th>
+              <th style="background:rgba(0,0,0,0.15)">Total Stock</th>
             </tr>
           </thead>
-          <tbody>${trContent}</tbody>
+          <tbody>
+            ${trContent}
+          </tbody>
         </table>
       </div>
     `;
@@ -890,82 +894,96 @@ function renderDashboardMatrix(){
 }
 
 function renderChecklist(){
-  let totalDone = 0, totalAll = 0;
+  const container = document.getElementById('sCards');
+  if(!container) return;
 
-  document.getElementById('sCards').innerHTML = CATS.map(cat => {
-    const items = checklist[cat.key];
-    const done = items.filter(i=>i.done).length;
-    totalDone += done; totalAll += items.length;
-    const pct = Math.round((done/items.length)*100);
-    const isOpen = openCards.has(cat.key);
+  container.innerHTML = CATS.map(c => {
+    const list = checklist[c.key] || [];
+    const doneCount = list.filter(i => i.done).length;
+    const pct = list.length ? Math.round((doneCount / list.length) * 100) : 0;
+    const isOpen = openCards.has(c.key);
+
+    const itemsHtml = list.map(item => `
+      <div class="check-item ${item.done ? 'done' : ''}" onclick="toggleCheckItem('${c.key}', '${item.id}')">
+        <input type="checkbox" ${item.done ? 'checked' : ''} ${!isAdmin ? 'disabled' : ''} onclick="event.stopPropagation(); toggleCheckItem('${c.key}', '${item.id}')" />
+        <span>${escapeHtml(item.text)}</span>
+      </div>
+    `).join('');
 
     return `
-    <div class="s-card${isOpen?' open':''}" data-cat="${cat.key}">
-      <div class="s-head" onclick="toggleCard('${cat.key}')">
-        <div class="title"><span class="badge">${done}/${items.length}</span>${cat.label}</div>
-        <div class="pct">${pct}%</div>
+      <div class="s-card ${isOpen ? 'open' : ''}" data-cat="${c.key}">
+        <div class="s-head" onclick="toggleCard('${c.key}')">
+          <div class="title">
+            <span class="badge">${c.label[0]}</span>
+            <span>${c.label}</span>
+          </div>
+          <span class="pct">${pct}%</span>
+        </div>
+        <div class="s-body">
+          <div class="bar"><div class="fill" style="width:${pct}%"></div></div>
+          ${itemsHtml}
+        </div>
       </div>
-      <div class="s-body">
-        <div class="bar"><div class="fill" style="width:${pct}%"></div></div>
-        ${items.map(it => `
-          <label class="check-item${it.done?' done':''}">
-            <input type="checkbox" ${it.done?'checked':''} ${!isAdmin ? 'disabled' : ''} onchange="toggleCheck('${cat.key}','${it.id}')" />
-            <span>${escapeHtml(it.text)}</span>
-          </label>`).join('')}
-      </div>
-    </div>`;
+    `;
   }).join('');
 
-  const overallPct = totalAll ? Math.round((totalDone/totalAll)*100) : 0;
+  // Calculate Overall
+  let totalItems = 0;
+  let totalDone = 0;
+  CATS.forEach(c => {
+    const list = checklist[c.key] || [];
+    totalItems += list.length;
+    totalDone += list.filter(i => i.done).length;
+  });
+  const overallPct = totalItems ? Math.round((totalDone / totalItems) * 100) : 0;
   document.getElementById('overallPct').textContent = overallPct + '%';
   document.getElementById('overallFill').style.width = overallPct + '%';
 }
 
-function toggleCard(key){ if(openCards.has(key)) openCards.delete(key); else openCards.add(key); renderChecklist(); }
-function toggleCheck(cat, id){ if(!isAdmin) return; const item = checklist[cat].find(i=>i.id===id); if(item){ item.done = !item.done; } renderChecklist(); saveChecklist(); }
-function escapeHtml(str){ const div = document.createElement('div'); div.textContent = str; return div.innerHTML; }
+function toggleCard(key){
+  if(openCards.has(key)) openCards.delete(key);
+  else openCards.add(key);
+  renderChecklist();
+}
 
-document.getElementById('addForm').addEventListener('submit', (e) => {
-  e.preventDefault();
+function toggleCheckItem(catKey, itemId){
   if(!isAdmin) return;
-  const name = document.getElementById('f-name').value.trim(); if(!name) return;
+  const list = checklist[catKey] || [];
+  const item = list.find(i => i.id === itemId);
+  if(item){
+    item.done = !item.done;
+    renderChecklist();
+    saveChecklist();
+  }
+}
 
-  inventory.unshift({
-    id: 'item-' + Date.now(),
-    name,
-    category: document.getElementById('f-category').value,
-    depot: document.getElementById('f-depot').value,
-    qty: Number(document.getElementById('f-qty').value) || 0,
-    condition: document.getElementById('f-condition').value,
-    flagged: false,
+function exportToExcel() {
+  const wb = XLSX.utils.book_new();
+  const flatData = [];
+
+  inventory.forEach(i => {
+    flatData.push({
+      'Item Name': i.name,
+      'Category': i.category,
+      'Depot': i.depot,
+      'Qty': i.qty,
+      'Condition': i.condition
+    });
   });
 
-  document.getElementById('f-name').value = '';
-  document.getElementById('f-qty').value = '1';
-  calculateCounters(); renderDashboardMatrix(); saveInventory();
-});
-
-document.getElementById('chips').addEventListener('click', (e) => {
-  const chip = e.target.closest('.chip'); if(!chip) return;
-  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
-  chip.classList.add('active'); 
-  currentChannelFilter = chip.dataset.filter; 
-  calculateCounters(); renderDashboardMatrix();
-});
-
-function exportToExcel(){
-  const wb = XLSX.utils.book_new();
-  const dataRows = inventory.map(i => ({
-    'Item Name': i.name, 'Category': i.category, 'Depot': i.depot, 'Qty': i.qty, 'Condition': i.condition
-  }));
-  const wsInv = XLSX.utils.json_to_sheet(dataRows.length ? dataRows : [{}]);
-  XLSX.utils.book_append_sheet(wb, wsInv, 'Sales Tool Master Data');
-  XLSX.writeFile(wb, `Sales_Tool_Matrix_Report.xlsx`);
+  const ws = XLSX.utils.json_to_sheet(flatData);
+  XLSX.utils.book_append_sheet(wb, ws, "Sales Tool Master Data");
+  XLSX.writeFile(wb, `Sales_Tool_Matrix_Report_${new Date().toISOString().slice(0,10)}.xlsx`);
 }
 
 function exportToJPG() {
   const targetArea = document.getElementById('dashboardSnapshotArea');
-  const options = { scale: 2, backgroundColor: '#EFE7D8', useCORS: true, logging: false };
+  const options = {
+    scale: 2, 
+    backgroundColor: '#EFE7D8', 
+    useCORS: true, 
+    logging: false
+  };
 
   html2canvas(targetArea, options).then(canvas => {
     const imgData = canvas.toDataURL('image/jpeg', 0.95);
@@ -976,33 +994,82 @@ function exportToJPG() {
     downloadLink.click();
     document.body.removeChild(downloadLink);
   }).catch(err => {
+    console.error("Snapshot export error:", err);
     alert("An error occurred while downloading the image.");
   });
 }
 
-// Drag and drop setup for Admin Bulk Zone
+function escapeHtml(str) {
+  if (!str) return '';
+  return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+}
+
+// Form Submission Event Listener
+document.getElementById('addForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  if(!isAdmin) return;
+
+  const nameInput = document.getElementById('f-name');
+  const catSelect = document.getElementById('f-category');
+  const depotSelect = document.getElementById('f-depot');
+  const qtyInput = document.getElementById('f-qty');
+  const condSelect = document.getElementById('f-condition');
+
+  const newItem = {
+    id: 'item-manual-' + Date.now(),
+    name: nameInput.value.trim(),
+    category: catSelect.value,
+    depot: depotSelect.value,
+    qty: Number(qtyInput.value) || 0,
+    condition: condSelect.value
+  };
+
+  inventory.unshift(newItem);
+  nameInput.value = '';
+  qtyInput.value = '1';
+
+  calculateCounters();
+  renderDashboardMatrix();
+  saveInventory();
+});
+
+// Setup Chip Channels Filter click logic
+document.getElementById('chips').addEventListener('click', function(e) {
+  const clickTarget = e.target.closest('.chip');
+  if(!clickTarget) return;
+  
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  clickTarget.classList.add('active');
+  
+  currentChannelFilter = clickTarget.getAttribute('data-filter');
+  calculateCounters();
+  renderDashboardMatrix();
+});
+
+// Drag and drop event handlers
 const dropZone = document.querySelector('.bulk-upload-zone');
 if(dropZone) {
   ['dragenter', 'dragover'].forEach(eventName => {
-    dropZone.addEventListener(eventName, (e) => { e.preventDefault(); if(isAdmin) dropZone.style.background = '#fff'; }, false);
+    dropZone.addEventListener(eventName, (e) => { e.preventDefault(); dropZone.style.background = '#fff'; }, false);
   });
   ['dragleave', 'drop'].forEach(eventName => {
     dropZone.addEventListener(eventName, (e) => { e.preventDefault(); dropZone.style.background = 'rgba(255,255,255,0.4)'; }, false);
   });
   dropZone.addEventListener('drop', (e) => {
-    if(!isAdmin) return;
     const dt = e.dataTransfer;
     const files = dt.files;
-    if(files.length) {
+    if(files.length > 0) {
       document.getElementById('excelFileInput').files = files;
       handleBulkExcelUpload({ target: { files: files } });
     }
   }, false);
 }
 
-// RUN SEED SECURITY CHECK
-checkAuthSecurity();
-loadData();
+// Bootstrap Init Trigger System
+window.addEventListener('DOMContentLoaded', () => {
+  checkAuthSecurity();
+  loadData();
+});
 </script>
 </body>
 </html>
