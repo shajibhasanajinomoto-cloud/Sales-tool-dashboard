@@ -266,7 +266,7 @@
     display:flex; align-items:center; gap:10px;
   }
   .matrix-container-layout { display: flex; flex-direction: column; gap: 24px; }
-  .cat-group-segment { display: flex; flex-direction: column; gap: 0px; border-radius: 4px; overflow: hidden; border: 1px solid var(--line); margin-bottom: 12px; }
+  .cat-group-segment { display: flex; flex-direction: column; gap: 0px; border-radius: 4px; overflow: hidden; border: 1px solid var(--line); }
   
   .cat-header-label-badge {
     font-family: 'Oswald', sans-serif;
@@ -575,7 +575,7 @@
 </div>
 
 <script>
-// MASTER DATA REPOSITORY
+// MASTER DATA REPOSITORY (UPDATED WITH EXCEL DATA)
 const HARDCODED_INVENTORY_DATA = [
   { id: 'ex-old-1', name: 'Sticker', category: 'Old Sales Tool', depot: 'HQ', qty: 90, condition: 'Unused' },
   { id: 'ex-old-2', name: 'Aji-Sal Hanger', category: 'Old Sales Tool', depot: 'North Depot', qty: 20, condition: 'Unused' },
@@ -595,8 +595,7 @@ const HARDCODED_INVENTORY_DATA = [
   { id: 'ex-12', name: 'Paper Hanger', category: 'Sales Tool', depot: 'CTG Depot', qty: 50, condition: 'New' },
   { id: 'ex-13', name: 'Paper Hanger', category: 'Sales Tool', depot: 'North Depot', qty: 200, condition: 'New' },
   { id: 'ex-14', name: 'Paper Hanger', category: 'Sales Tool', depot: 'South Depot', qty: 220, condition: 'New' },
-  { id: 'ex-15', name: 'Refrigerator', category: 'Asset', depot: 'HQ', qty: 2, condition: 'Unused' },
-  { id: 'ex-16', name: 'Paper Hanger', category: 'Sales Tool', depot: 'HQ', qty: 4125, condition: 'New' }
+  { id: 'ex-15', name: 'Paper Hanger', category: 'Sales Tool', depot: 'HQ', qty: 4125, condition: 'New' }
 ];
 
 const CATS = [
@@ -635,18 +634,11 @@ const CATEGORY_STYLES = {
   'Old Sales Tool': { class: 'segment-old-sales-tool', hex: '#7A828A' },
 };
 
-const DEPOTS = ['HQ', 'South Depot', 'North Depot', 'CTG Depot', 'Outside Dhaka'];
-
 let inventory = [];
 let checklist = JSON.parse(JSON.stringify(DEFAULT_CHECKLIST));
 let currentChannelFilter = 'all';
 let openCards = new Set(['sort']);
 let isAdmin = false;
-
-function escapeHtml(str) {
-  if (!str) return '';
-  return str.toString().replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
-}
 
 function checkAuthSecurity() {
   const urlParams = new URLSearchParams(window.location.search);
@@ -698,10 +690,6 @@ async function saveChecklist(){
   }catch(e){}
 }
 
-function touchSaved(){ 
-  document.getElementById('lastSaved').textContent = new Date().toLocaleDateString() + ' (Synced Live)'; 
-}
-
 function clearAllData() {
   if(!isAdmin) return;
   if (confirm("Are you sure you want to delete all existing data and reset to original default stocks?")) {
@@ -718,9 +706,86 @@ function deleteSegmentItem(itemName, category) {
   if(!isAdmin) return;
   if (confirm(`Are you sure you want to remove "${itemName}" from the ${category} category completely?`)) {
     inventory = inventory.filter(i => !(i.name.trim() === itemName && i.category === category));
-    renderAll();
+    calculateCounters();
+    renderDashboardMatrix();
     saveInventory();
   }
+}
+
+function handleBulkExcelUpload(event) {
+  if(!isAdmin) return;
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const data = new Uint8Array(e.target.result);
+      const workbook = XLSX.read(data, { type: 'array' });
+      const firstSheetName = workbook.SheetNames[0];
+      const worksheet = workbook.Sheets[firstSheetName];
+      const rawRows = XLSX.utils.sheet_to_json(worksheet);
+      
+      if (rawRows.length === 0) {
+        alert("The selected Excel file is empty!");
+        return;
+      }
+
+      let insertedCount = 0;
+      rawRows.reverse().forEach(row => {
+        const name = row['Item Name'] || row['item name'] || row['Name'] || row['name'];
+        let category = row['Category'] || row['category'];
+        let depot = row['Depot'] || row['depot'] || row['Hub'];
+        const qty = row['Qty'] || row['qty'] || row['Quantity'] || row['quantity'] || 0;
+        const condition = row['Condition'] || row['condition'] || 'New';
+
+        if (name && category && depot) {
+          category = category.toString().trim();
+          if(category.toLowerCase() === 'sales tool') category = 'Sales Tool';
+          if(category.toLowerCase() === 'promotional item' || category.toLowerCase() === 'promo') category = 'Promotional Item';
+          if(category.toLowerCase() === 'give-away' || category.toLowerCase() === 'giveaway') category = 'Give-Away';
+          if(category.toLowerCase() === 'asset') category = 'Asset';
+          if(category.toLowerCase() === 'old sales tool') category = 'Old Sales Tool';
+
+          depot = depot.toString().trim();
+          if(depot.toLowerCase() === 'hq') depot = 'HQ';
+          if(depot.toLowerCase() === 'south depot') depot = 'South Depot';
+          if(depot.toLowerCase() === 'north depot') depot = 'North Depot';
+          if(depot.toLowerCase() === 'ctg depot') depot = 'CTG Depot';
+          if(depot.toLowerCase() === 'outside dhaka') depot = 'Outside Dhaka';
+
+          inventory.unshift({
+            id: 'item-bulk-' + Date.now() + '-' + Math.random().toString(36).substr(2, 5),
+            name: name.toString().trim(),
+            category: category,
+            depot: depot,
+            qty: Number(qty) || 0,
+            condition: condition.toString().trim(),
+            flagged: false
+          });
+          insertedCount++;
+        }
+      });
+
+      alert(`Bulk Import Complete! Successfully added: ${insertedCount} rows.`);
+      calculateCounters();
+      renderDashboardMatrix();
+      saveInventory();
+      event.target.value = '';
+    } catch (err) {
+      alert("Error parsing Excel file.");
+    }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function touchSaved(){ document.getElementById('lastSaved').textContent = new Date().toLocaleDateString() + ' (Synced Live)'; }
+
+function renderAll(){
+  calculateCounters();
+  renderDashboardMatrix();
+  renderChecklist();
+  touchSaved();
 }
 
 function calculateCounters(){
@@ -779,129 +844,123 @@ function renderDashboardMatrix(){
     return;
   }
 
-  let htmlContent = '';
-
-  distinctCategories.forEach(cat => {
-    const styleObj = CATEGORY_STYLES[cat] || { class: '', hex: '#2A2723' };
+  container.innerHTML = distinctCategories.map(cat => {
+    const styleCfg = CATEGORY_STYLES[cat];
+    let poolItems = inventory.filter(i => i.category === cat);
+    if(currentChannelFilter !== 'all') {
+      poolItems = poolItems.filter(i => i.depot === currentChannelFilter);
+    }
     
-    // Group items under this category to discover unique names
-    const catItems = inventory.filter(i => i.category === cat);
-    const uniqueItemNames = [...new Set(catItems.map(i => i.name.trim()))];
+    const processedMap = {};
+    poolItems.forEach(i => {
+      const itemKey = i.name.trim();
+      if(!processedMap[itemKey]){
+        processedMap[itemKey] = { name: itemKey, 'HQ': 0, 'South Depot': 0, 'North Depot': 0, 'CTG Depot': 0, 'Outside Dhaka': 0, subtotal: 0 };
+      }
+      processedMap[itemKey][i.depot] += Number(i.qty || 0);
+      processedMap[itemKey].subtotal += Number(i.qty || 0);
+    });
 
-    if (uniqueItemNames.length === 0) return;
+    const outputRows = Object.values(processedMap);
 
-    let segmentHtml = `
-      <div class="cat-group-segment ${styleObj.class}">
+    if (outputRows.length === 0) {
+      return `
+        <div class="cat-group-segment ${styleCfg.class}" style="margin-bottom:8px;">
+          <div class="cat-header-label-badge">${cat}</div>
+          <div style="padding:15px; text-align:center; font-size:12px; color:var(--ink-soft); background:#fff;">No data segment matching selected filter</div>
+        </div>
+      `;
+    }
+
+    let trContent = outputRows.map(r => `
+      <tr>
+        <td>
+          <div class="cell-name-wrapper">
+            <span>${escapeHtml(r.name)}</span>
+            <button class="item-delete-inline-btn" onclick="deleteSegmentItem('${escapeHtml(r.name)}', '${cat}')" title="Delete Product">🗑️</button>
+          </div>
+        </td>
+        <td>${r['HQ'] || '-'}</td>
+        <td>${r['South Depot'] || '-'}</td>
+        <td>${r['North Depot'] || '-'}</td>
+        <td>${r['CTG Depot'] || '-'}</td>
+        <td>${r['Outside Dhaka'] || '-'}</td>
+        <td class="item-total-col">${r.subtotal}</td>
+      </tr>
+    `).join('');
+
+    return `
+      <div class="cat-group-segment ${styleCfg.class}">
         <div class="cat-header-label-badge">${cat}</div>
         <table class="matrix-data-table">
           <thead>
             <tr>
-              <th>Item Name</th>
+              <th>Item Variant Profile</th>
               <th>HQ</th>
               <th>South Depot</th>
               <th>North Depot</th>
               <th>CTG Depot</th>
               <th>Outside Dhaka</th>
-              <th style="background-color: var(--ink-soft)">Total</th>
+              <th style="background:rgba(0,0,0,0.15)">Total Stock</th>
             </tr>
           </thead>
           <tbody>
-    `;
-
-    uniqueItemNames.forEach(name => {
-      let rowTotal = 0;
-      let depotCellsHtml = '';
-
-      DEPOTS.forEach(depot => {
-        // Find quantity for specific layout item
-        const match = catItems.find(i => i.name.trim() === name && i.depot === depot);
-        let quantity = 0;
-        
-        // Apply filter transparency logic if necessary
-        if (currentChannelFilter === 'all' || currentChannelFilter === depot) {
-          quantity = match ? Number(match.qty || 0) : 0;
-        }
-
-        rowTotal += quantity;
-        depotCellsHtml += `<td>${quantity > 0 ? quantity : '—'}</td>`;
-      });
-
-      // Avoid showing rows that completely empty out under active single filters
-      if (currentChannelFilter !== 'all' && rowTotal === 0) return;
-
-      segmentHtml += `
-        <tr>
-          <td>
-            <div class="cell-name-wrapper">
-              <span>${escapeHtml(name)}</span>
-              <button class="item-delete-inline-btn" onclick="deleteSegmentItem('${escapeHtml(name)}', '${cat}')" title="Delete product item row">×</button>
-            </div>
-          </td>
-          ${depotCellsHtml}
-          <td class="item-total-col">${rowTotal}</td>
-        </tr>
-      `;
-    });
-
-    segmentHtml += `
+            ${trContent}
           </tbody>
         </table>
       </div>
     `;
-    htmlContent += segmentHtml;
-  });
-
-  container.innerHTML = htmlContent || `<div class="empty-note">No items matched the active channel filter.</div>`;
+  }).join('');
 }
 
 function renderChecklist(){
   const container = document.getElementById('sCards');
-  let absoluteTotal = 0;
-  let absoluteDone = 0;
+  if(!container) return;
 
-  let html = CATS.map(cat => {
-    const list = checklist[cat.key] || [];
-    const countAll = list.length;
-    const countDone = list.filter(i => i.done).length;
-    
-    absoluteTotal += countAll;
-    absoluteDone += countDone;
-
-    const percentage = countAll > 0 ? Math.round((countDone / countAll) * 100) : 100;
-    const isOpen = openCards.has(cat.key) ? 'open' : '';
+  container.innerHTML = CATS.map(c => {
+    const list = checklist[c.key] || [];
+    const doneCount = list.filter(i => i.done).length;
+    const pct = list.length ? Math.round((doneCount / list.length) * 100) : 0;
+    const isOpen = openCards.has(c.key);
 
     const itemsHtml = list.map(item => `
-      <label class="check-item ${item.done ? 'done' : ''}">
-        <input type="checkbox" ${item.done ? 'checked' : ''} ${isAdmin ? '' : 'disabled'} onchange="toggleCheckItem('${cat.key}', '${item.id}')" />
+      <div class="check-item ${item.done ? 'done' : ''}" onclick="toggleCheckItem('${c.key}', '${item.id}')">
+        <input type="checkbox" ${item.done ? 'checked' : ''} ${!isAdmin ? 'disabled' : ''} onclick="event.stopPropagation(); toggleCheckItem('${c.key}', '${item.id}')" />
         <span>${escapeHtml(item.text)}</span>
-      </label>
+      </div>
     `).join('');
 
     return `
-      <div class="s-card ${isOpen}" data-cat="${cat.key}">
-        <div class="s-head" onclick="toggleCardCollapse('${cat.key}')">
-          <div class="title"><span>■</span> ${cat.label}</div>
-          <div style="display:flex; align-items:center; gap:12px;">
-            <span class="pct">${percentage}%</span>
-            <span class="badge">${countDone}/${countAll}</span>
+      <div class="s-card ${isOpen ? 'open' : ''}" data-cat="${c.key}">
+        <div class="s-head" onclick="toggleCard('${c.key}')">
+          <div class="title">
+            <span class="badge">${c.label[0]}</span>
+            <span>${c.label}</span>
           </div>
+          <span class="pct">${pct}%</span>
         </div>
         <div class="s-body">
-          <div class="bar"><div class="fill" style="width: ${percentage}%"></div></div>
-          ${itemsHtml || '<span style="font-size:11px; font-style:italic; color:var(--ink-soft)">No requirements set</span>'}
+          <div class="bar"><div class="fill" style="width:${pct}%"></div></div>
+          ${itemsHtml}
         </div>
       </div>
     `;
   }).join('');
 
-  container.innerHTML = html;
-
-  const totalPercentage = absoluteTotal > 0 ? Math.round((absoluteDone / absoluteTotal) * 100) : 0;
-  document.getElementById('overallPct').textContent = totalPercentage + '%';
-  document.getElementById('overallFill').style.width = totalPercentage + '%';
+  // Calculate Overall
+  let totalItems = 0;
+  let totalDone = 0;
+  CATS.forEach(c => {
+    const list = checklist[c.key] || [];
+    totalItems += list.length;
+    totalDone += list.filter(i => i.done).length;
+  });
+  const overallPct = totalItems ? Math.round((totalDone / totalItems) * 100) : 0;
+  document.getElementById('overallPct').textContent = overallPct + '%';
+  document.getElementById('overallFill').style.width = overallPct + '%';
 }
 
-function toggleCardCollapse(key){
+function toggleCard(key){
   if(openCards.has(key)) openCards.delete(key);
   else openCards.add(key);
   renderChecklist();
@@ -910,152 +969,35 @@ function toggleCardCollapse(key){
 function toggleCheckItem(catKey, itemId){
   if(!isAdmin) return;
   const list = checklist[catKey] || [];
-  const match = list.find(i => i.id === itemId);
-  if(match) {
-    match.done = !match.done;
+  const item = list.find(i => i.id === itemId);
+  if(item){
+    item.done = !item.done;
     renderChecklist();
     saveChecklist();
   }
 }
 
-function handleBulkExcelUpload(event) {
-  if(!isAdmin) return;
-  const file = event.target.files[0];
-  if (!file) return;
-
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    try {
-      const data = new Uint8Array(e.target.result);
-      const workbook = XLSX.read(data, { type: 'array' });
-      const firstSheetName = workbook.SheetNames[0];
-      const worksheet = workbook.Sheets[firstSheetName];
-      const rawRows = XLSX.utils.sheet_to_json(worksheet);
-      
-      if (rawRows.length === 0) {
-        alert("The selected Excel file is empty!");
-        return;
-      }
-
-      let insertedCount = 0;
-      rawRows.reverse().forEach(row => {
-        const name = row['Item Name'] || row['item name'] || row['Name'] || row['name'];
-        let category = row['Category'] || row['category'];
-        let depot = row['Depot'] || row['depot'] || row['Hub'];
-        const qty = row['Qty'] || row['qty'] || row['Quantity'] || row['quantity'] || 0;
-        const condition = row['Condition'] || row['condition'] || 'New';
-
-        if (name && category && depot) {
-          category = category.toString().trim();
-          if(category.toLowerCase() === 'sales tool') category = 'Sales Tool';
-          if(category.toLowerCase() === 'promotional item' || category.toLowerCase() === 'promo') category = 'Promotional Item';
-          if(category.toLowerCase() === 'give-away' || category.toLowerCase() === 'giveaway') category = 'Give-Away';
-          if(category.toLowerCase() === 'asset') category = 'Asset';
-          if(category.toLowerCase() === 'old sales tool') category = 'Old Sales Tool';
-
-          depot = depot.toString().trim();
-          if(depot.toLowerCase() === 'hq') depot = 'HQ';
-          if(depot.toLowerCase() === 'south depot') depot = 'South Depot';
-          if(depot.toLowerCase() === 'north depot') depot = 'North Depot';
-          if(depot.toLowerCase() === 'ctg depot') depot = 'CTG Depot';
-          if(depot.toLowerCase() === 'outside dhaka') depot = 'Outside Dhaka';
-
-          inventory.unshift({
-            id: 'item-bulk-' + Date.now() + '-' + Math.random().toString(36).substr(2, 5),
-            name: name.toString().trim(),
-            category: category,
-            depot: depot,
-            qty: Number(qty) || 0,
-            condition: condition.toString().trim()
-          });
-          insertedCount++;
-        }
-      });
-
-      alert(`Bulk Import Complete! Successfully added: ${insertedCount} rows.`);
-      renderAll();
-      saveInventory();
-      event.target.value = '';
-    } catch (err) {
-      alert("Error parsing Excel file.");
-    }
-  };
-  reader.readAsArrayBuffer(file);
-}
-
-// SETUP EVENT LISTENERS FOR CHIPS INTERFACE
-document.getElementById('chips').addEventListener('click', (e) => {
-  const clickedChip = e.target.closest('.chip');
-  if(!clickedChip) return;
-  
-  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-  clickedChip.classList.add('active');
-  
-  currentChannelFilter = clickedChip.getAttribute('data-filter');
-  renderAll();
-});
-
-// SUBMIT REGISTRATION HANDLER
-document.getElementById('addForm').addEventListener('submit', (e) => {
-  e.preventDefault();
-  if(!isAdmin) return;
-
-  const nameInput = document.getElementById('f-name');
-  const catInput = document.getElementById('f-category');
-  const depotInput = document.getElementById('f-depot');
-  const qtyInput = document.getElementById('f-qty');
-  const condInput = document.getElementById('f-condition');
-
-  const newItem = {
-    id: 'item-manual-' + Date.now(),
-    name: nameInput.value.trim(),
-    category: catInput.value,
-    depot: depotInput.value,
-    qty: Number(qtyInput.value) || 0,
-    condition: condInput.value
-  };
-
-  inventory.unshift(newItem);
-  renderAll();
-  saveInventory();
-
-  // Reset name and layout counts
-  nameInput.value = '';
-  qtyInput.value = '1';
-  nameInput.focus();
-});
-
-// EXPORT TO SPREADSHEET ENGINE
 function exportToExcel() {
-  try {
-    const dataRows = inventory.map((item, idx) => ({
-      'SL': idx + 1,
-      'Item Name': item.name,
-      'Category': item.category,
-      'Depot Location': item.depot,
-      'Quantity': item.qty,
-      'Condition Status': item.condition
-    }));
+  const wb = XLSX.utils.book_new();
+  const flatData = [];
 
-    const worksheet = XLSX.utils.json_to_sheet(dataRows);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Sales Matrix Master");
-    
-    // Auto-fit column widths loop
-    const max_len = dataRows.reduce((w, r) => Object.keys(r).reduce((inner_w, k) => Math.max(inner_w, String(r[k]).length), w), 10);
-    worksheet["!cols"] = [ { wch: 6 }, { wch: 26 }, { wch: 20 }, { wch: 18 }, { wch: 10 }, { wch: 14 } ];
+  inventory.forEach(i => {
+    flatData.push({
+      'Item Name': i.name,
+      'Category': i.category,
+      'Depot': i.depot,
+      'Qty': i.qty,
+      'Condition': i.condition
+    });
+  });
 
-    XLSX.writeFile(workbook, `Sales_Tool_Matrix_Report_${new Date().toISOString().slice(0,10)}.xlsx`);
-  } catch (err) {
-    console.error(err);
-    alert("Could not complete Excel generation sequence.");
-  }
+  const ws = XLSX.utils.json_to_sheet(flatData);
+  XLSX.utils.book_append_sheet(wb, ws, "Sales Tool Master Data");
+  XLSX.writeFile(wb, `Sales_Tool_Matrix_Report_${new Date().toISOString().slice(0,10)}.xlsx`);
 }
 
-// SNAPSHOT PRINT ENGINE 
 function exportToJPG() {
   const targetArea = document.getElementById('dashboardSnapshotArea');
-  
   const options = {
     scale: 2, 
     backgroundColor: '#EFE7D8', 
@@ -1065,7 +1007,6 @@ function exportToJPG() {
 
   html2canvas(targetArea, options).then(canvas => {
     const imgData = canvas.toDataURL('image/jpeg', 0.95);
-    
     const downloadLink = document.createElement('a');
     downloadLink.href = imgData;
     downloadLink.download = `Sales_Tool_Dashboard_Snapshot_${new Date().toISOString().slice(0,10)}.jpg`;
@@ -1074,11 +1015,58 @@ function exportToJPG() {
     document.body.removeChild(downloadLink);
   }).catch(err => {
     console.error("Snapshot export error:", err);
-    alert("An error occurred while downloading the image. Please try again.");
+    alert("An error occurred while downloading the image.");
   });
 }
 
-// Drag and drop setup for bulk input zone
+function escapeHtml(str) {
+  if (!str) return '';
+  return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+}
+
+// Form Submission Event Listener
+document.getElementById('addForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  if(!isAdmin) return;
+
+  const nameInput = document.getElementById('f-name');
+  const catSelect = document.getElementById('f-category');
+  const depotSelect = document.getElementById('f-depot');
+  const qtyInput = document.getElementById('f-qty');
+  const condSelect = document.getElementById('f-condition');
+
+  const newItem = {
+    id: 'item-manual-' + Date.now(),
+    name: nameInput.value.trim(),
+    category: catSelect.value,
+    depot: depotSelect.value,
+    qty: Number(qtyInput.value) || 0,
+    condition: condSelect.value
+  };
+
+  inventory.unshift(newItem);
+  nameInput.value = '';
+  qtyInput.value = '1';
+
+  calculateCounters();
+  renderDashboardMatrix();
+  saveInventory();
+});
+
+// Setup Chip Channels Filter click logic
+document.getElementById('chips').addEventListener('click', function(e) {
+  const clickTarget = e.target.closest('.chip');
+  if(!clickTarget) return;
+  
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  clickTarget.classList.add('active');
+  
+  currentChannelFilter = clickTarget.getAttribute('data-filter');
+  calculateCounters();
+  renderDashboardMatrix();
+});
+
+// Drag and drop event handlers
 const dropZone = document.querySelector('.bulk-upload-zone');
 if(dropZone) {
   ['dragenter', 'dragover'].forEach(eventName => {
@@ -1088,21 +1076,20 @@ if(dropZone) {
     dropZone.addEventListener(eventName, (e) => { e.preventDefault(); dropZone.style.background = 'rgba(255,255,255,0.4)'; }, false);
   });
   dropZone.addEventListener('drop', (e) => {
-    e.preventDefault();
-    dropZone.style.background = 'rgba(255,255,255,0.4)';
     const dt = e.dataTransfer;
     const files = dt.files;
-    if(files.length) {
-      const fileInput = document.getElementById('excelFileInput');
-      fileInput.files = files;
-      handleBulkExcelUpload({ target: fileInput });
+    if(files.length > 0) {
+      document.getElementById('excelFileInput').files = files;
+      handleBulkExcelUpload({ target: { files: files } });
     }
   }, false);
 }
 
-// INITIAL STARTUP SEQUENCE RUNNERS
-checkAuthSecurity();
-loadData();
+// Bootstrap Init Trigger System
+window.addEventListener('DOMContentLoaded', () => {
+  checkAuthSecurity();
+  loadData();
+});
 </script>
 </body>
 </html>
