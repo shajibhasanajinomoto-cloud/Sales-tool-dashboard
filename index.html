@@ -185,23 +185,24 @@
   .panel h2{ font-family:'Oswald', sans-serif; text-transform: uppercase; letter-spacing: 2px; font-size: 18px; margin: 0 0 16px; display:flex; align-items:center; gap:10px; }
   
   .matrix-container-layout { display: flex; flex-direction: column; gap: 24px; }
-  .cat-group-segment { display: flex; flex-direction: column; gap: 0px; border-radius: 4px; overflow: hidden; border: 1px solid var(--line); }
+  
+  /* পরিবর্তন: ড্যাশবোর্ডের স্ক্রিনের বাইরে ইমেজ ওভারফ্লো প্রটেকশন */
+  .cat-group-segment { display: flex; flex-direction: column; gap: 0px; border-radius: 4px; border: 1px solid var(--line); position: relative; }
   .cat-header-label-badge { font-family: 'Oswald', sans-serif; font-size: 14px; font-weight: 600; color: white; padding: 6px 14px; text-transform: uppercase; letter-spacing: 1.5px; align-self: flex-start; border-radius: 4px 12px 0 0; }
   
   .matrix-data-table { width: 100%; border-collapse: collapse; font-size: 13px; background: #fff; }
   .matrix-data-table th { font-family: 'Oswald', sans-serif; color: white; font-weight: 500; padding: 10px 12px; text-align: left; letter-spacing: 1px; text-transform: uppercase; border: 1px solid rgba(255,255,255,0.15); }
   
-  /* Layout adjustments for SKU Name Column with Images */
   .matrix-data-table th:first-child, .matrix-data-table td:first-child { width: 40%; font-weight: 500; }
   .matrix-data-table th:not(:first-child), .matrix-data-table td:not(:first-child) { width: 10%; text-align: center; }
   .matrix-data-table td { padding: 8px 12px; border: 1px solid var(--line); color: var(--ink); }
   .matrix-data-table tr:nth-child(even) { background: var(--paper-light); }
   .matrix-data-table td.item-total-col { font-weight: 700; background: #FFFDF9; border-left: 1.5px solid var(--line); }
 
-  /* SKU Image Core Layout with Smart Right-Side Zoom Pivot */
   .cell-name-wrapper { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; }
   .sku-meta-inline { display: flex; align-items: center; gap: 12px; position: relative; }
   
+  /* নতুন উন্নত স্মার্ট জুম লেআউট */
   .sku-img-preview { 
     width: 38px; 
     height: 38px; 
@@ -210,17 +211,23 @@
     border: 1px solid var(--line);
     background: #fdfdfd;
     cursor: pointer;
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
-    transform-origin: left center; /* জুম শুরু হবে বাম থেকে, ফলে ইমেজ ডানে বাড়বে */
+    transition: transform 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.25s ease;
+    transform-origin: left center; /* বাম থেকে ডানে সুন্দর জুম ইফেক্ট */
+    position: relative;
+    z-index: 1;
   }
 
-  /* মাউস হোভার করলে ছবি ডান দিকে সুন্দরভাবে ৪.৫ গুণ বড় হবে */
+  /* মাউস হোভার করলে ২.৫ গুন বড় হয়ে ভাসমান বক্সে রূপ নিবে এবং ড্যাশবোর্ডের ভেতরে থাকবে */
   .sku-img-preview:hover {
-    transform: scale(4.5) translateX(2px); /* ডান দিকে সামান্য পুশ করা হয়েছে */
-    position: relative;
-    z-index: 9999;
-    box-shadow: 4px 4px 15px rgba(0,0,0,0.3);
+    transform: scale(2.5) translateX(4px); 
+    z-index: 999;
+    box-shadow: 4px 6px 15px rgba(0,0,0,0.25);
     border-color: var(--ink);
+  }
+
+  /* একদম নিচের টেবিল রোগুলোর ছবি যেন নিচে স্ক্রিনের বাইরে কেটে না যায় */
+  .matrix-data-table tr:nth-last-child(-n+2) .sku-img-preview {
+    transform-origin: left bottom;
   }
 
   .item-delete-inline-btn { background: transparent; border: none; cursor: pointer; font-size: 14px; padding: 2px 6px; border-radius: 3px; opacity: 0.4; display: none; }
@@ -339,7 +346,6 @@
 </div>
 
 <script>
-// SKU Wise Mapping Engine - URL updates mapped safely
 const SKU_IMAGE_MAP = {
   'Uniform': 'https://i.postimg.cc/XJj9CydF/Uniform.jpg',
   'Uniform-BP': 'https://drive.google.com/uc?export=view&id=1Y19p1Fafa_P9zLrmmBsRS31veBL1l-m0',
@@ -493,6 +499,7 @@ function renderDashboardMatrix(){
           <td>
             <div class="cell-name-wrapper">
               <div class="sku-meta-inline">
+                <!-- আপডেট করা ক্লাসের সাথে ইমেজ ট্যাগ -->
                 <img src="${imgSrc}" class="sku-img-preview" alt="${escapeHtml(r.name)}" crossorigin="anonymous" />
                 <span>${escapeHtml(r.name)}</span>
               </div>
