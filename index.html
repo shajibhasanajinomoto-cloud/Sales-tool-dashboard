@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Sales Tool Dashboard</title>
+<title>Ajinomoto Sales Tool Dashboard with SKU Images</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
@@ -17,20 +17,9 @@
     --ink: #2A2723;
     --ink-soft: #6B6358;
     --line: rgba(42,39,35,0.16);
-
-    /* Red Color Palette for Channel Chips & Buttons */
     --red-base: #C92A2A;       
     --red-active: #961C1C;     
     --red-hover: #E03131;      
-
-    /* 5S Stage Colors */
-    --sort: #D9483A;       
-    --order: #E89A2E;      
-    --shine: #9CB23A;      
-    --std: #2E86AB;        
-    --sustain: #8C3F91;    
-
-    /* Category Colors matching image format */
     --color-sales-tool: #2E86AB;   
     --color-promo: #E2953B;        
     --color-giveaway: #843B8B;     
@@ -53,7 +42,6 @@
 
   .wrap{ max-width: 1350px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
 
-  /* ---------- HEADER ---------- */
   header{
     background: var(--ink);
     color: var(--paper-light);
@@ -83,7 +71,7 @@
   }
   .header-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
   
-  .export-btn, .reset-btn, .jpg-btn{
+  .export-btn, .jpg-btn{
     position: relative;
     z-index: 1;
     font-family:'Oswald', sans-serif;
@@ -105,28 +93,15 @@
     color: var(--paper-light);
   }
   .export-btn:hover{ background: var(--paper-light); color: var(--ink); }
-  .export-btn svg, .jpg-btn svg{ width:14px; height:14px; }
 
-  /* Red Type Styled Button */
   .jpg-btn {
     border: 1.5px solid var(--red-base);
     background: var(--red-base);
     color: #ffffff;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   }
-  .jpg-btn:hover {
-    background: var(--red-hover);
-    border-color: var(--red-hover);
-  }
+  .jpg-btn:hover { background: var(--red-hover); border-color: var(--red-hover); }
 
-  .reset-btn {
-    border: 1.5px solid var(--sort);
-    background: transparent;
-    color: var(--sort);
-  }
-  .reset-btn:hover { background: var(--sort); color: var(--paper-light); }
-
-  /* ---------- JPG EXPORT CONTAINER TARGET ---------- */
   .snapshot-target {
     display: flex;
     flex-direction: column;
@@ -136,7 +111,6 @@
     border-radius: 4px;
   }
 
-  /* ---------- DYNAMIC COUNTERS GRID ---------- */
   .top-counters {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
@@ -165,31 +139,14 @@
   .counter-box.asset { border-left-color: var(--color-asset); }
   .counter-box.old-sales-tool { border-left-color: var(--color-old-sales-tool); }
 
-  .counter-main-data {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-  }
+  .counter-main-data { display: flex; flex-direction: column; gap: 2px; }
+  .counter-title { font-family: 'Oswald', sans-serif; font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--ink-soft); }
+  .counter-value { font-family: 'IBM Plex Mono', monospace; font-size: 26px; font-weight: 700; color: var(--ink); }
 
-  .counter-title {
-    font-family: 'Oswald', sans-serif;
-    font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    color: var(--ink-soft);
-  }
-  .counter-value {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 26px;
-    font-weight: 700;
-    color: var(--ink);
-  }
-
-  /* ---------- DYNAMIC AUTOMATIC SUB-COUNTERS CONTAINER ---------- */
   .inner-sub-metrics {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
+    gap: 6px;
     border-top: 1px dashed var(--line);
     padding-top: 8px;
     margin-top: auto;
@@ -198,30 +155,14 @@
     display: flex;
     align-items: center;
     gap: 6px;
-    background: rgba(42,39,35,0.05);
-    padding: 3px 8px;
+    background: rgba(42,39,35,0.04);
+    padding: 2px 6px;
     border-radius: 4px;
-    border: 1px solid rgba(42,39,35,0.08);
+    border: 1px solid rgba(42,39,35,0.06);
   }
-  .sub-metric-label {
-    font-family: 'IBM Plex Sans', sans-serif;
-    font-size: 10px;
-    color: var(--ink-soft);
-    text-transform: uppercase;
-    font-weight: 600;
-  }
-  .sub-metric-val {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
-    font-weight: 700;
-    color: var(--ink);
-    background: #fff;
-    padding: 0px 4px;
-    border-radius: 2px;
-    border: 1px solid rgba(42,39,35,0.1);
-  }
+  .sub-metric-label { font-family: 'IBM Plex Sans', sans-serif; font-size: 10px; color: var(--ink-soft); text-transform: uppercase; font-weight: 600; }
+  .sub-metric-val { font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 700; color: var(--ink); background: #fff; padding: 0px 4px; border-radius: 2px; border: 1px solid rgba(42,39,35,0.1); }
 
-  /* ---------- RED THEME FILTER INTERFACE ---------- */
   .chips{ display:flex; gap:10px; flex-wrap:wrap; margin: 5px 0; }
   .chip{
     font-family:'IBM Plex Mono', monospace;
@@ -229,211 +170,67 @@
     font-weight: 600;
     letter-spacing: 1px;
     text-transform: uppercase;
-    padding: 10px 20px;
+    padding: 8px 16px;
     border: 1.5px solid var(--red-base);
     border-radius: 4px;
     background: var(--red-base);
     cursor: pointer;
     color: #FFFFFF;
     transition: all .15s ease;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.06);
   }
-  .chip:hover{
-    background: var(--red-hover);
-    border-color: var(--red-hover);
-  }
-  .chip.active{ 
-    background: var(--red-active); 
-    color: #FFFFFF; 
-    border-color: var(--ink);
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
-  }
+  .chip:hover{ background: var(--red-hover); border-color: var(--red-hover); }
+  .chip.active{ background: var(--red-active); color: #FFFFFF; border-color: var(--ink); box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); }
 
-  /* ---------- MATRIX DASHBOARD LAYOUT ---------- */
-  .panel{
-    background: var(--paper-light);
-    border: 1px solid var(--line);
-    border-radius: 6px;
-    padding: 20px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.02);
-  }
-  .panel h2{
-    font-family:'Oswald', sans-serif;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    font-size: 18px;
-    margin: 0 0 16px;
-    display:flex; align-items:center; gap:10px;
-  }
+  .panel{ background: var(--paper-light); border: 1px solid var(--line); border-radius: 6px; padding: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+  .panel h2{ font-family:'Oswald', sans-serif; text-transform: uppercase; letter-spacing: 2px; font-size: 18px; margin: 0 0 16px; display:flex; align-items:center; gap:10px; }
+  
   .matrix-container-layout { display: flex; flex-direction: column; gap: 24px; }
   .cat-group-segment { display: flex; flex-direction: column; gap: 0px; border-radius: 4px; overflow: hidden; border: 1px solid var(--line); }
+  .cat-header-label-badge { font-family: 'Oswald', sans-serif; font-size: 14px; font-weight: 600; color: white; padding: 6px 14px; text-transform: uppercase; letter-spacing: 1.5px; align-self: flex-start; border-radius: 4px 12px 0 0; }
   
-  .cat-header-label-badge {
-    font-family: 'Oswald', sans-serif;
-    font-size: 14px;
-    font-weight: 600;
-    color: white;
-    padding: 6px 14px;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    align-self: flex-start;
-    border-radius: 4px 12px 0 0;
-  }
+  .matrix-data-table { width: 100%; border-collapse: collapse; font-size: 13px; background: #fff; }
+  .matrix-data-table th { font-family: 'Oswald', sans-serif; color: white; font-weight: 500; padding: 10px 12px; text-align: left; letter-spacing: 1px; text-transform: uppercase; border: 1px solid rgba(255,255,255,0.15); }
   
-  .matrix-data-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 13px;
-    background: #fff;
-  }
-  
-  .matrix-data-table th {
-    font-family: 'Oswald', sans-serif;
-    color: white;
-    font-weight: 500;
-    padding: 10px 12px;
-    text-align: left;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    border: 1px solid rgba(255,255,255,0.15);
-  }
-  
-  .matrix-data-table th:first-child, .matrix-data-table td:first-child { width: 35%; font-weight: 500; }
-  .matrix-data-table th:not(:first-child), .matrix-data-table td:not(:first-child) { width: 10.8%; text-align: center; }
-
-  .matrix-data-table td {
-    padding: 9px 12px;
-    border: 1px solid var(--line);
-    color: var(--ink);
-    font-family: 'IBM Plex Sans', sans-serif;
-  }
-  
+  /* Layout adjustments for SKU Name Column with Images */
+  .matrix-data-table th:first-child, .matrix-data-table td:first-child { width: 40%; font-weight: 500; }
+  .matrix-data-table th:not(:first-child), .matrix-data-table td:not(:first-child) { width: 10%; text-align: center; }
+  .matrix-data-table td { padding: 8px 12px; border: 1px solid var(--line); color: var(--ink); }
   .matrix-data-table tr:nth-child(even) { background: var(--paper-light); }
-  .matrix-data-table td.item-total-col { font-weight: 700; background: #FFFDF9; color: var(--ink); border-left: 1.5px solid var(--line); }
+  .matrix-data-table td.item-total-col { font-weight: 700; background: #FFFDF9; border-left: 1.5px solid var(--line); }
 
-  /* Dynamic Delete Action Style */
-  .cell-name-wrapper { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
-  .item-delete-inline-btn {
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    font-size: 14px;
-    padding: 2px 6px;
-    border-radius: 3px;
-    transition: background 0.15s ease;
-    opacity: 0.4;
-    display: none; /* Hidden by default for visitors */
+  /* SKU Image Core Layout */
+  .cell-name-wrapper { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; }
+  .sku-meta-inline { display: flex; align-items: center; gap: 12px; }
+  .sku-img-preview { 
+    width: 38px; 
+    height: 38px; 
+    object-fit: cover; 
+    border-radius: 4px; 
+    border: 1px solid var(--line);
+    background: #fdfdfd;
   }
+  .item-delete-inline-btn { background: transparent; border: none; cursor: pointer; font-size: 14px; padding: 2px 6px; border-radius: 3px; opacity: 0.4; display: none; }
   .admin-mode .matrix-data-table tr:hover .item-delete-inline-btn { display: inline-block; opacity: 1; }
   .item-delete-inline-btn:hover { background: rgba(217, 72, 58, 0.15); opacity: 1; }
 
-  /* Segment Theme Coloring Rules */
   .segment-sales-tool .cat-header-label-badge, .segment-sales-tool .matrix-data-table th { background-color: var(--color-sales-tool); }
   .segment-promo .cat-header-label-badge, .segment-promo .matrix-data-table th { background-color: var(--color-promo); }
   .segment-giveaway .cat-header-label-badge, .segment-giveaway .matrix-data-table th { background-color: var(--color-giveaway); }
   .segment-asset .cat-header-label-badge, .segment-asset .matrix-data-table th { background-color: var(--color-asset); }
   .segment-old-sales-tool .cat-header-label-badge, .segment-old-sales-tool .matrix-data-table th { background-color: var(--color-old-sales-tool); }
 
-  /* ---------- DATA REGISTRATION INPUTS ---------- */
-  form.add-form{
-    display:grid;
-    grid-template-columns: 2fr 1.2fr 1fr 0.6fr 0.9fr auto;
-    gap: 8px;
-    margin-top: 10px;
-  }
+  form.add-form{ display:grid; grid-template-columns: 2fr 1.2fr 1fr 0.6fr 0.9fr auto; gap: 8px; margin-top: 10px; }
   @media (max-width: 768px){ form.add-form{ grid-template-columns: 1fr 1fr; } }
-  form.add-form input, form.add-form select{
-    font-family:'IBM Plex Sans', sans-serif;
-    font-size: 13px;
-    padding: 10px 12px;
-    border: 1px solid var(--line);
-    border-radius: 4px;
-    background: #fff;
-    color: var(--ink);
-    outline: none;
-  }
-  form.add-form input:focus, form.add-form select:focus{ border-color: var(--ink); }
-  form.add-form button{
-    font-family:'Oswald', sans-serif;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    font-size: 12px;
-    font-weight: 600;
-    border: none;
-    border-radius: 4px;
-    background: var(--ink);
-    color: var(--paper-light);
-    padding: 10px 16px;
-    cursor: pointer;
-    transition: background .15s ease;
-  }
-  form.add-form button:hover{ background: var(--std); }
+  form.add-form input, form.add-form select{ font-family:'IBM Plex Sans', sans-serif; font-size: 13px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 4px; background: #fff; color: var(--ink); outline: none; }
+  form.add-form button{ font-family:'Oswald', sans-serif; letter-spacing: 1.5px; text-transform: uppercase; font-size: 12px; font-weight: 600; border: none; border-radius: 4px; background: var(--ink); color: var(--paper-light); padding: 10px 16px; cursor: pointer; }
 
-  /* ---------- BULK EXCEL UPLOAD BOX STYLE ---------- */
-  .bulk-upload-zone {
-    margin-top: 15px;
-    border: 2px dashed var(--line);
-    border-radius: 6px;
-    padding: 20px;
-    text-align: center;
-    background: rgba(255, 255, 255, 0.4);
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
-  .bulk-upload-zone:hover {
-    background: #fff;
-    border-color: var(--std);
-  }
-  .bulk-upload-zone p {
-    margin: 0 0 8px 0;
-    font-size: 14px;
-    font-weight: 500;
-  }
-  .bulk-upload-zone span {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
-    color: var(--ink-soft);
-  }
+  .bulk-upload-zone { margin-top: 15px; border: 2px dashed var(--line); border-radius: 6px; padding: 20px; text-align: center; background: rgba(255, 255, 255, 0.4); cursor: pointer; }
+  .bulk-upload-zone:hover { background: #fff; border-color: var(--std); }
   #excelFileInput { display: none; }
 
-  /* ---------- 5S AUDIT COMPLIANCE ---------- */
-  .overall { margin-bottom: 14px; }
-  .overall .bar { height: 10px; background: var(--paper); border-radius: 5px; overflow:hidden; border: 1px solid var(--line); }
-  .overall .fill { height:100%; background: linear-gradient(90deg, var(--sort), var(--order), var(--shine), var(--std), var(--sustain)); transition: width .25s ease; }
-  .overall .label { display:flex; justify-content: space-between; font-family:'IBM Plex Mono', monospace; font-size: 11px; color: var(--ink-soft); margin-bottom: 6px; text-transform: uppercase; }
-
-  .s-card { border: 1px solid var(--line); border-radius: 6px; margin-bottom: 8px; overflow:hidden; background:#fff; }
-  .s-card .s-head { display:flex; align-items:center; justify-content:space-between; padding: 10px 12px; color:#fff; cursor:pointer; }
-  .s-card .s-head .title { display:flex; align-items:center; gap:10px; font-family:'Oswald', sans-serif; text-transform: uppercase; letter-spacing: 1px; font-size: 13px; font-weight:600; }
-  .s-card .s-head .badge { width:20px; height:20px; border-radius:50%; background: rgba(255,255,255,0.25); display:flex; align-items:center; justify-content:center; font-family:'IBM Plex Mono', monospace; font-size: 10px; }
-  .s-card .s-head .pct { font-family:'IBM Plex Mono', monospace; font-size: 11px; }
-  .s-card .s-body { padding: 10px 14px; display:none; }
-  .s-card.open .s-body { display:block; }
-  .s-card .s-body .bar { height:6px; border-radius:3px; background: var(--paper); overflow:hidden; margin-bottom:8px; border: 1px solid var(--line); }
-  .s-card .s-body .bar .fill { height:100%; }
-  
-  .check-item { display:flex; align-items:flex-start; gap:8px; font-size: 12px; line-height:1.4; padding: 4px 0; cursor:pointer; }
-  .check-item input { margin-top: 3px; accent-color: var(--ink); }
-  .check-item.done span { color: var(--ink-soft); text-decoration: line-through; }
-
-  .s-card[data-cat="sort"] .s-head{ background: var(--sort); }
-  .s-card[data-cat="sort"] .s-body .fill{ background: var(--sort); }
-  .s-card[data-cat="order"] .s-head{ background: var(--order); }
-  .s-card[data-cat="order"] .s-body .fill{ background: var(--order); }
-  .s-card[data-cat="shine"] .s-head{ background: var(--shine); }
-  .s-card[data-cat="shine"] .s-body .fill{ background: var(--shine); }
-  .s-card[data-cat="std"] .s-head{ background: var(--std); }
-  .s-card[data-cat="std"] .s-body .fill{ background: var(--std); }
-  .s-card[data-cat="sustain"] .s-head{ background: var(--sustain); }
-  .s-card[data-cat="sustain"] .s-body .fill{ background: var(--sustain); }
-
-  .empty-note { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--ink-soft); text-align: center; padding: 40px; border: 1px dashed var(--line); background: #fff; border-radius: 4px; }
   .footnote{ margin-top: 20px; font-family:'IBM Plex Mono', monospace; font-size: 11px; color: var(--ink-soft); text-align:center; }
-
-  /* SECURITY MODE ACTION CONTROLS */
   .admin-only { display: none !important; }
   .admin-mode .admin-only { display: block !important; }
-  .admin-mode button.admin-only { display: inline-flex !important; }
   .admin-mode form.admin-only { display: grid !important; }
 </style>
 </head>
@@ -442,69 +239,40 @@
 
   <header>
     <div class="header-text">
-      <h1>Sales Tool Dashboard</h1>
+      <h1>Ajinomoto Sales Tool Dashboard</h1>
     </div>
     <div class="header-actions">
-      <button class="reset-btn admin-only" onclick="clearAllData()">Reset Database</button>
-      
-      <button class="jpg-btn" onclick="exportToJPG()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-        Download JPG
-      </button>
-
-      <button class="export-btn" onclick="exportToExcel()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        Export Report
-      </button>
+      <button class="jpg-btn" onclick="exportToJPG()">Download JPG</button>
+      <button class="export-btn" onclick="exportToExcel()">Export Report</button>
     </div>
   </header>
 
   <div class="snapshot-target" id="dashboardSnapshotArea">
-    
     <div class="top-counters">
       <div class="counter-box sales-tool">
-        <div class="counter-main-data">
-          <span class="counter-title">Sales Tool Total</span>
-          <span class="counter-value" id="countSalesTool">0</span>
-        </div>
+        <div class="counter-main-data"><span class="counter-title">Sales Tool Total</span><span class="counter-value" id="countSalesTool">0</span></div>
         <div class="inner-sub-metrics" id="subContainer-Sales-Tool"></div>
       </div>
-
       <div class="counter-box promo">
-        <div class="counter-main-data">
-          <span class="counter-title">Promotional Item Total</span>
-          <span class="counter-value" id="countPromo">0</span>
-        </div>
+        <div class="counter-main-data"><span class="counter-title">Promotional Total</span><span class="counter-value" id="countPromo">0</span></div>
         <div class="inner-sub-metrics" id="subContainer-Promotional-Item"></div>
       </div>
-      
       <div class="counter-box giveaway">
-        <div class="counter-main-data">
-          <span class="counter-title">Give-Away Total</span>
-          <span class="counter-value" id="countGiveaway">0</span>
-        </div>
+        <div class="counter-main-data"><span class="counter-title">Give-Away Total</span><span class="counter-value" id="countGiveaway">0</span></div>
         <div class="inner-sub-metrics" id="subContainer-Give-Away"></div>
       </div>
-      
       <div class="counter-box asset">
-        <div class="counter-main-data">
-          <span class="counter-title">Asset Total</span>
-          <span class="counter-value" id="countAsset">0</span>
-        </div>
+        <div class="counter-main-data"><span class="counter-title">Asset Total</span><span class="counter-value" id="countAsset">0</span></div>
         <div class="inner-sub-metrics" id="subContainer-Asset"></div>
       </div>
-
       <div class="counter-box old-sales-tool">
-        <div class="counter-main-data">
-          <span class="counter-title">Old Sales Tool Total</span>
-          <span class="counter-value" id="countOldSalesTool">0</span>
-        </div>
+        <div class="counter-main-data"><span class="counter-title">Old Sales Tool Total</span><span class="counter-value" id="countOldSalesTool">0</span></div>
         <div class="inner-sub-metrics" id="subContainer-Old-Sales-Tool"></div>
       </div>
     </div>
 
     <div class="chips" id="chips">
-      <div class="chip active" data-filter="all">All Channels</div>
+      <div class="chip active" data-filter="all">All Depots</div>
       <div class="chip" data-filter="HQ">HQ</div>
       <div class="chip" data-filter="South Depot">South Depot</div>
       <div class="chip" data-filter="North Depot">North Depot</div>
@@ -513,69 +281,70 @@
     </div>
 
     <section class="panel">
-      <h2>Stock Analysis Matrix Dashboard</h2>
+      <h2>Stock Analysis Matrix Grid</h2>
       <div class="matrix-container-layout" id="matrixLayoutEngine"></div>
     </section>
-
   </div> 
 
-  <div style="display: grid; grid-template-columns: 1.6fr 1fr; gap: 18px; align-items: start;" id="bottomGrid">
-    <div style="display: flex; flex-direction: column; gap: 18px;">
-      <section class="panel admin-only">
-        <h2>Item Stock Registration</h2>
-        <form class="add-form" id="addForm">
-          <input type="text" id="f-name" placeholder="Item name (e.g. Uniform Pack, Hanger Box)" required />
-          <select id="f-category">
-            <option>Sales Tool</option>
-            <option>Promotional Item</option>
-            <option>Give-Away</option>
-            <option>Asset</option>
-            <option>Old Sales Tool</option>
-          </select>
-          <select id="f-depot">
-            <option>HQ</option>
-            <option>South Depot</option>
-            <option>North Depot</option>
-            <option>CTG Depot</option>
-            <option>Outside Dhaka</option>
-          </select>
-          <input type="number" id="f-qty" placeholder="Qty" min="0" value="1" required />
-          <select id="f-condition">
-            <option>New</option>
-            <option>Working</option>
-            <option>Used</option>
-            <option>Unused</option>
-            <option>Broken</option>
-          </select>
-          <button type="submit">Add Item</button>
-        </form>
-      </section>
+  <div style="display: flex; flex-direction: column; gap: 18px;">
+    <section class="panel admin-only">
+      <h2>Register Stock Item (Local Session)</h2>
+      <form class="add-form" id="addForm">
+        <input type="text" id="f-name" placeholder="Item name" required />
+        <select id="f-category">
+          <option>Sales Tool</option>
+          <option>Promotional Item</option>
+          <option>Give-Away</option>
+          <option>Asset</option>
+          <option>Old Sales Tool</option>
+        </select>
+        <select id="f-depot">
+          <option>HQ</option>
+          <option>South Depot</option>
+          <option>North Depot</option>
+          <option>CTG Depot</option>
+          <option>Outside Dhaka</option>
+        </select>
+        <input type="number" id="f-qty" placeholder="Qty" min="0" value="1" required />
+        <select id="f-condition"><option>New</option><option>Working</option><option>Used</option><option>Unused</option><option>Broken</option></select>
+        <button type="submit">Add Item</button>
+      </form>
+    </section>
 
-      <section class="panel admin-only">
-        <h2>Bulk Upload Data via Excel</h2>
-        <div class="bulk-upload-zone" onclick="document.getElementById('excelFileInput').click()">
-          <p>📁 Click here to select or Drag & Drop Excel File (.xlsx)</p>
-          <span>Required Excel Headers: Item Name | Category | Depot | Qty | Condition</span>
-        </div>
-        <input type="file" id="excelFileInput" accept=".xlsx, .xls" onchange="handleBulkExcelUpload(event)" />
-      </section>
-    </div>
-
-    <section class="panel">
-      <h2>5S Compliance System</h2>
-      <div class="overall">
-        <div class="label"><span>Overall Audit Status</span><span id="overallPct">0%</span></div>
-        <div class="bar"><div class="fill" id="overallFill" style="width:0%"></div></div>
+    <section class="panel admin-only">
+      <h2>Bulk Import Excel Data Temporary</h2>
+      <div class="bulk-upload-zone" onclick="document.getElementById('excelFileInput').click()">
+        <p>📁 Click or Drag & Drop Excel File (.xlsx)</p>
+        <span>Expected Fields: Item Name | Category | Depot | Qty | Condition</span>
       </div>
-      <div id="sCards"></div>
+      <input type="file" id="excelFileInput" accept=".xlsx, .xls" onchange="handleBulkExcelUpload(event)" />
     </section>
   </div>
 
-  <div class="footnote">Central Matrix Log Engine · Updates Synced: <span id="lastSaved">—</span></div>
+  <div class="footnote">Ajinomoto Analytics Log · Data Mode: Hardcoded Static Engine with Asset Previews</div>
 </div>
 
 <script>
-// MASTER DATA REPOSITORY (UPDATED WITH EXCEL DATA)
+// SKU Wise Mapping Engine - Apni chaile niche links gulo change kore permanent photo path/URL dite parben
+const SKU_IMAGE_MAP = {
+  'Uniform': 'https://drive.google.com/file/d/1gW1RNAkhEGfkwQ9Fi4ygIAGtSMawl4t_/view?usp=drive_link',
+  'Uniform-BP': 'https://drive.google.com/file/d/1Y19p1Fafa_P9zLrmmBsRS31veBL1l-m0/view?usp=drive_link',
+  'T-Shirt': 'https://drive.google.com/file/d/1Y19p1Fafa_P9zLrmmBsRS31veBL1l-m0/view?usp=drive_link',
+  'Shirt': 'https://images.unsplash.com/photo-1603252109303-2751441dd157?w=100&auto=format&fit=crop&q=60',
+  'Paper Hanger': 'https://drive.google.com/file/d/1Dvp5s72X9p8-DpXdz1NCD1nAYOoLMM4I/view?usp=drive_link',
+  'Aji-Sal Hanger': 'https://images.unsplash.com/photo-1616046229478-9901c5536a45?w=100&auto=format&fit=crop&q=60',
+  'Aji-Hanger': 'https://images.unsplash.com/photo-1616046229478-9901c5536a45?w=100&auto=format&fit=crop&q=60',
+  'Hapima Hanger': 'https://drive.google.com/file/d/1NbZvrGAcINlAHmJDBTk_botwdqd0jfAw/view?usp=drive_link',
+  'Invoice': 'https://drive.google.com/file/d/1gW1RNAkhEGfkwQ9Fi4ygIAGtSMawl4t_/view?usp=drive_link',
+  'Hand Bag': 'https://drive.google.com/file/d/1pzm0o9dWV60VGbNRntJ74UtAg3o3jf5p/view?usp=drive_link',
+  'Refrigerator': 'https://images.unsplash.com/photo-1571175432230-01a2d86a3975?w=100&auto=format&fit=crop&q=60',
+  'Monitor': 'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=100&auto=format&fit=crop&q=60',
+  'Aji-Sticker': 'https://images.unsplash.com/photo-1572375995301-4516b34141d5?w=100&auto=format&fit=crop&q=60',
+  'Aji-Sal Sticker': 'https://images.unsplash.com/photo-1572375995301-4516b34141d5?w=100&auto=format&fit=crop&q=60',
+  'Aji-leaflet': 'https://images.unsplash.com/photo-1586075010923-2dd4570fb338?w=100&auto=format&fit=crop&q=60',
+  'default': 'https://images.unsplash.com/photo-1531403009284-440f080d1e12?w=100&auto=format&fit=crop&q=60' // kono image match na hle default dekhabe
+};
+
 const HARDCODED_INVENTORY_DATA = [
   { id: "e1", name: "Uniform", category: "Sales Tool", depot: "HQ", qty: 336, condition: "New" },
   { id: "e2", name: "Uniform-BP", category: "Sales Tool", depot: "HQ", qty: 10, condition: "New" },
@@ -603,46 +372,16 @@ const HARDCODED_INVENTORY_DATA = [
   { id: "e24", name: "Paper Hanger", category: "Sales Tool", depot: "HQ", qty: 4125, condition: "New" }
 ];
 
-const CATS = [
-  { key:'sort', label:'Sort', color:'var(--sort)' },
-  { key:'order', label:'Set in Order', color:'var(--order)' },
-  { key:'shine', label:'Shine', color:'var(--shine)' },
-  { key:'std', label:'Standardise', color:'var(--std)' },
-  { key:'sustain', label:'Sustain', color:'var(--sustain)' },
-];
-
-const DEFAULT_CHECKLIST = {
-  sort: [
-    { id:'s1', text:'List all old Sales Tools across all Hubs & HQ locations', done:true },
-    { id:'s2', text:'Separate items clearly into Sales Tool / Promo / Give-Away / Asset segments', done:true },
-  ],
-  order: [
-    { id:'o1', text:'Designate precise storage bays or bins for each separate pool profile', done:true },
-    { id:'o2', text:'Clearly label layout shelves with product name parameters and max limits', done:true },
-  ],
-  shine: [
-    { id:'h1', text:'Enforce proactive spot-cleaning of warehouse racks during counts', done:true },
-  ],
-  std: [
-    { id:'d1', text:'Verify uniform categorization across tracking boards', done:true },
-  ],
-  sustain: [
-    { id:'u1', text:'Appoint specific audit task managers for running weekly checks', done:true },
-  ],
-};
-
 const CATEGORY_STYLES = {
-  'Sales Tool': { class: 'segment-sales-tool', hex: '#2E86AB' },
-  'Promotional Item': { class: 'segment-promo', hex: '#E2953B' },
-  'Give-Away': { class: 'segment-giveaway', hex: '#843B8B' },
-  'Asset': { class: 'segment-asset', hex: '#8FA842' },
-  'Old Sales Tool': { class: 'segment-old-sales-tool', hex: '#7A828A' },
+  'Sales Tool': { class: 'segment-sales-tool' },
+  'Promotional Item': { class: 'segment-promo' },
+  'Give-Away': { class: 'segment-giveaway' },
+  'Asset': { class: 'segment-asset' },
+  'Old Sales Tool': { class: 'segment-old-sales-tool' },
 };
 
 let inventory = [];
-let checklist = JSON.parse(JSON.stringify(DEFAULT_CHECKLIST));
 let currentChannelFilter = 'all';
-let openCards = new Set(['sort']);
 let isAdmin = false;
 
 function checkAuthSecurity() {
@@ -650,147 +389,26 @@ function checkAuthSecurity() {
   if (urlParams.get('auth') === 'admin') {
     isAdmin = true;
     document.body.classList.add('admin-mode');
-  } else {
-    isAdmin = false;
-    document.body.classList.remove('admin-mode');
   }
 }
 
-async function loadData(){
-  try{
-    const localInv = localStorage.getItem('sales-tool-inv-v2');
-    const localChk = localStorage.getItem('sales-tool-chk-v2');
-    
-    if(localInv) {
-      inventory = JSON.parse(localInv);
-    } else {
-      inventory = [...HARDCODED_INVENTORY_DATA];
-    }
-    
-    if(localChk) {
-      checklist = JSON.parse(localChk);
-    } else {
-      checklist = JSON.parse(JSON.stringify(DEFAULT_CHECKLIST));
-    }
-  }catch(e){ 
-    console.warn(e);
+function loadInitialData() {
+  const localSaved = localStorage.getItem('ajinomoto_local_inv');
+  if (localSaved) {
+    inventory = JSON.parse(localSaved);
+  } else {
     inventory = [...HARDCODED_INVENTORY_DATA];
   }
   renderAll();
 }
 
-async function saveInventory(){
-  if(!isAdmin) return;
-  try{
-    localStorage.setItem('sales-tool-inv-v2', JSON.stringify(inventory));
-    touchSaved();
-  }catch(e){}
+function saveToLocalStorage() {
+  localStorage.setItem('ajinomoto_local_inv', JSON.stringify(inventory));
 }
-
-async function saveChecklist(){
-  if(!isAdmin) return;
-  try{
-    localStorage.setItem('sales-tool-chk-v2', JSON.stringify(checklist));
-    touchSaved();
-  }catch(e){}
-}
-
-function clearAllData() {
-  if(!isAdmin) return;
-  if (confirm("Are you sure you want to delete all existing data and reset to original default stocks?")) {
-    inventory = [...HARDCODED_INVENTORY_DATA];
-    checklist = JSON.parse(JSON.stringify(DEFAULT_CHECKLIST));
-    localStorage.removeItem('sales-tool-inv-v2');
-    localStorage.removeItem('sales-tool-chk-v2');
-    renderAll();
-    alert("Dashboard has been reset to base data deployment parameters.");
-  }
-}
-
-function deleteSegmentItem(itemName, category) {
-  if(!isAdmin) return;
-  if (confirm(`Are you sure you want to remove "${itemName}" from the ${category} category completely?`)) {
-    inventory = inventory.filter(i => !(i.name.trim() === itemName && i.category === category));
-    calculateCounters();
-    renderDashboardMatrix();
-    saveInventory();
-  }
-}
-
-function handleBulkExcelUpload(event) {
-  if(!isAdmin) return;
-  const file = event.target.files[0];
-  if (!file) return;
-
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    try {
-      const data = new Uint8Array(e.target.result);
-      const workbook = XLSX.read(data, { type: 'array' });
-      const firstSheetName = workbook.SheetNames[0];
-      const worksheet = workbook.Sheets[firstSheetName];
-      const rawRows = XLSX.utils.sheet_to_json(worksheet);
-      
-      if (rawRows.length === 0) {
-        alert("The selected Excel file is empty!");
-        return;
-      }
-
-      let insertedCount = 0;
-      rawRows.reverse().forEach(row => {
-        const name = row['Item Name'] || row['item name'] || row['Name'] || row['name'];
-        let category = row['Category'] || row['category'];
-        let depot = row['Depot'] || row['depot'] || row['Hub'];
-        const qty = row['Qty'] || row['qty'] || row['Quantity'] || row['quantity'] || 0;
-        const condition = row['Condition'] || row['condition'] || 'New';
-
-        if (name && category && depot) {
-          category = category.toString().trim();
-          if(category.toLowerCase() === 'sales tool') category = 'Sales Tool';
-          if(category.toLowerCase() === 'promotional item' || category.toLowerCase() === 'promo') category = 'Promotional Item';
-          if(category.toLowerCase() === 'give-away' || category.toLowerCase() === 'giveaway') category = 'Give-Away';
-          if(category.toLowerCase() === 'asset') category = 'Asset';
-          if(category.toLowerCase() === 'old sales tool') category = 'Old Sales Tool';
-
-          depot = depot.toString().trim();
-          if(depot.toLowerCase() === 'hq') depot = 'HQ';
-          if(depot.toLowerCase() === 'south depot') depot = 'South Depot';
-          if(depot.toLowerCase() === 'north depot') depot = 'North Depot';
-          if(depot.toLowerCase() === 'ctg depot') depot = 'CTG Depot';
-          if(depot.toLowerCase() === 'outside dhaka') depot = 'Outside Dhaka';
-
-          inventory.unshift({
-            id: 'item-bulk-' + Date.now() + '-' + Math.random().toString(36).substr(2, 5),
-            name: name.toString().trim(),
-            category: category,
-            depot: depot,
-            qty: Number(qty) || 0,
-            condition: condition.toString().trim(),
-            flagged: false
-          });
-          insertedCount++;
-        }
-      });
-
-      alert(`Bulk Import Complete! Successfully added: ${insertedCount} rows.`);
-      calculateCounters();
-      renderDashboardMatrix();
-      saveInventory();
-      event.target.value = '';
-    } catch (err) {
-      alert("Error parsing Excel file.");
-    }
-  };
-  reader.readAsArrayBuffer(file);
-}
-
-function touchSaved(){ document.getElementById('lastSaved').textContent = new Date().toLocaleDateString() + ' (Synced Live)'; }
 
 function renderAll(){
   calculateCounters();
   renderDashboardMatrix();
-  renderChecklist();
-  touchSaved();
 }
 
 function calculateCounters(){
@@ -799,14 +417,10 @@ function calculateCounters(){
   
   inventory.forEach(i => {
     if (currentChannelFilter === 'all' || i.depot === currentChannelFilter) {
-      if (catTotals[i.category] !== undefined) {
-        catTotals[i.category] += Number(i.qty || 0);
-      }
+      if (catTotals[i.category] !== undefined) catTotals[i.category] += Number(i.qty || 0);
       const itemName = i.name.trim();
       if (dynamicSubMaps[i.category]) {
-        if (!dynamicSubMaps[i.category][itemName]) {
-          dynamicSubMaps[i.category][itemName] = 0;
-        }
+        if (!dynamicSubMaps[i.category][itemName]) dynamicSubMaps[i.category][itemName] = 0;
         dynamicSubMaps[i.category][itemName] += Number(i.qty || 0);
       }
     }
@@ -818,17 +432,14 @@ function calculateCounters(){
   document.getElementById('countAsset').textContent = catTotals['Asset'];
   document.getElementById('countOldSalesTool').textContent = catTotals['Old Sales Tool'];
 
-  const targetCategories = ['Sales Tool', 'Promotional Item', 'Give-Away', 'Asset', 'Old Sales Tool'];
-  targetCategories.forEach(cat => {
-    const domId = 'subContainer-' + cat.replace(/\s+/g, '-');
-    const container = document.getElementById(domId);
+  ['Sales Tool', 'Promotional Item', 'Give-Away', 'Asset', 'Old Sales Tool'].forEach(cat => {
+    const container = document.getElementById('subContainer-' + cat.replace(/\s+/g, '-'));
     if (!container) return;
-    
     const subItemsMap = dynamicSubMaps[cat];
     const uniqueKeys = Object.keys(subItemsMap);
     
     if (uniqueKeys.length === 0) {
-      container.innerHTML = `<span style="font-size:10px; color:var(--ink-soft); font-style:italic;">No sub-items</span>`;
+      container.innerHTML = `<span style="font-size:10px; color:var(--ink-soft); font-style:italic;">Empty</span>`;
     } else {
       container.innerHTML = uniqueKeys.map(key => `
         <div class="sub-metric-item" title="${escapeHtml(key)}">
@@ -844,17 +455,10 @@ function renderDashboardMatrix(){
   const container = document.getElementById('matrixLayoutEngine');
   const distinctCategories = ['Sales Tool', 'Promotional Item', 'Give-Away', 'Asset', 'Old Sales Tool'];
   
-  if(inventory.length === 0){
-    container.innerHTML = `<div class="empty-note">No items available.</div>`;
-    return;
-  }
-
   container.innerHTML = distinctCategories.map(cat => {
     const styleCfg = CATEGORY_STYLES[cat];
     let poolItems = inventory.filter(i => i.category === cat);
-    if(currentChannelFilter !== 'all') {
-      poolItems = poolItems.filter(i => i.depot === currentChannelFilter);
-    }
+    if(currentChannelFilter !== 'all') poolItems = poolItems.filter(i => i.depot === currentChannelFilter);
     
     const processedMap = {};
     poolItems.forEach(i => {
@@ -867,234 +471,126 @@ function renderDashboardMatrix(){
     });
 
     const outputRows = Object.values(processedMap);
-
-    if (outputRows.length === 0) {
+    let trContent = outputRows.map(r => {
+      // Image extraction based on map registry
+      const imgSrc = SKU_IMAGE_MAP[r.name] || SKU_IMAGE_MAP['default'];
+      
       return `
-        <div class="cat-group-segment ${styleCfg.class}" style="margin-bottom:8px;">
-          <div class="cat-header-label-badge">${cat}</div>
-          <div style="padding:15px; text-align:center; font-size:12px; color:var(--ink-soft); background:#fff;">No data segment matching selected filter</div>
-        </div>
+        <tr>
+          <td>
+            <div class="cell-name-wrapper">
+              <div class="sku-meta-inline">
+                <img src="${imgSrc}" class="sku-img-preview" alt="${escapeHtml(r.name)}" crossorigin="anonymous" />
+                <span>${escapeHtml(r.name)}</span>
+              </div>
+              <button class="item-delete-inline-btn" onclick="deleteSegmentItem('${escapeHtml(r.name)}', '${cat}')">🗑️</button>
+            </div>
+          </td>
+          <td>${r['HQ'] || ''}</td><td>${r['South Depot'] || ''}</td><td>${r['North Depot'] || ''}</td><td>${r['CTG Depot'] || ''}</td><td>${r['Outside Dhaka'] || ''}</td>
+          <td class="item-total-col">${r.subtotal}</td>
+        </tr>
       `;
-    }
+    }).join('');
 
-    let trContent = outputRows.map(r => `
-      <tr>
-        <td>
-          <div class="cell-name-wrapper">
-            <span>${escapeHtml(r.name)}</span>
-            <button class="item-delete-inline-btn" onclick="deleteSegmentItem('${escapeHtml(r.name)}', '${cat}')" title="Delete Product">🗑️</button>
-          </div>
-        </td>
-        <td>${r['HQ'] || '-'}</td>
-        <td>${r['South Depot'] || '-'}</td>
-        <td>${r['North Depot'] || '-'}</td>
-        <td>${r['CTG Depot'] || '-'}</td>
-        <td>${r['Outside Dhaka'] || '-'}</td>
-        <td class="item-total-col">${r.subtotal}</td>
-      </tr>
-    `).join('');
+    if(outputRows.length === 0) trContent = `<tr><td style="color:var(--ink-soft); font-style:italic;">No active assets in this filter</td><td></td><td></td><td></td><td></td><td></td><td class="item-total-col">-</td></tr>`;
 
     return `
       <div class="cat-group-segment ${styleCfg.class}">
         <div class="cat-header-label-badge">${cat}</div>
         <table class="matrix-data-table">
-          <thead>
-            <tr>
-              <th>Item Variant Profile</th>
-              <th>HQ</th>
-              <th>South Depot</th>
-              <th>North Depot</th>
-              <th>CTG Depot</th>
-              <th>Outside Dhaka</th>
-              <th style="background:rgba(0,0,0,0.15)">Total Stock</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${trContent}
-          </tbody>
+          <thead><tr><th>Item Segment Name</th><th>HQ</th><th>South Depot</th><th>North Depot</th><th>CTG Depot</th><th>Outside Dhaka</th><th>Item Total</th></tr></thead>
+          <tbody>${trContent}</tbody>
         </table>
-      </div>
-    `;
+      </div>`;
   }).join('');
 }
 
-function renderChecklist(){
-  const container = document.getElementById('sCards');
-  if(!container) return;
-
-  container.innerHTML = CATS.map(c => {
-    const list = checklist[c.key] || [];
-    const doneCount = list.filter(i => i.done).length;
-    const pct = list.length ? Math.round((doneCount / list.length) * 100) : 0;
-    const isOpen = openCards.has(c.key);
-
-    const itemsHtml = list.map(item => `
-      <div class="check-item ${item.done ? 'done' : ''}" onclick="toggleCheckItem('${c.key}', '${item.id}')">
-        <input type="checkbox" ${item.done ? 'checked' : ''} ${!isAdmin ? 'disabled' : ''} onclick="event.stopPropagation(); toggleCheckItem('${c.key}', '${item.id}')" />
-        <span>${escapeHtml(item.text)}</span>
-      </div>
-    `).join('');
-
-    return `
-      <div class="s-card ${isOpen ? 'open' : ''}" data-cat="${c.key}">
-        <div class="s-head" onclick="toggleCard('${c.key}')">
-          <div class="title">
-            <span class="badge">${c.label[0]}</span>
-            <span>${c.label}</span>
-          </div>
-          <span class="pct">${pct}%</span>
-        </div>
-        <div class="s-body">
-          <div class="bar"><div class="fill" style="width:${pct}%"></div></div>
-          ${itemsHtml}
-        </div>
-      </div>
-    `;
-  }).join('');
-
-  // Calculate Overall
-  let totalItems = 0;
-  let totalDone = 0;
-  CATS.forEach(c => {
-    const list = checklist[c.key] || [];
-    totalItems += list.length;
-    totalDone += list.filter(i => i.done).length;
-  });
-  const overallPct = totalItems ? Math.round((totalDone / totalItems) * 100) : 0;
-  document.getElementById('overallPct').textContent = overallPct + '%';
-  document.getElementById('overallFill').style.width = overallPct + '%';
-}
-
-function toggleCard(key){
-  if(openCards.has(key)) openCards.delete(key);
-  else openCards.add(key);
-  renderChecklist();
-}
-
-function toggleCheckItem(catKey, itemId){
+function deleteSegmentItem(itemName, category) {
   if(!isAdmin) return;
-  const list = checklist[catKey] || [];
-  const item = list.find(i => i.id === itemId);
-  if(item){
-    item.done = !item.done;
-    renderChecklist();
-    saveChecklist();
+  if (confirm(`Delete "${itemName}"?`)) {
+    inventory = inventory.filter(i => !(i.name.trim() === itemName.trim() && i.category === category));
+    saveToLocalStorage();
+    renderAll();
   }
 }
 
-function exportToExcel() {
+document.getElementById('addForm').addEventListener('submit', (e) => {
+  e.preventDefault();
+  if(!isAdmin) return;
+  const name = document.getElementById('f-name').value.trim();
+  const category = document.getElementById('f-category').value;
+  const depot = document.getElementById('f-depot').value;
+  const qty = Number(document.getElementById('f-qty').value) || 0;
+  const condition = document.getElementById('f-condition').value;
+
+  inventory.push({ id: 'item-' + Date.now(), name, category, depot, qty, condition });
+  document.getElementById('f-name').value = '';
+  document.getElementById('f-qty').value = '1';
+  saveToLocalStorage();
+  renderAll();
+});
+
+function handleBulkExcelUpload(event) {
+  if(!isAdmin) return;
+  const file = event.target.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const data = new Uint8Array(e.target.result);
+      const workbook = XLSX.read(data, { type: 'array' });
+      const rawRows = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
+      if (!rawRows.length) return;
+
+      rawRows.forEach(row => {
+        let name = row['Item Name'] || row['Name'] || row['item name'];
+        let category = row['Category'] || row['category'] || 'Sales Tool';
+        let depot = row['Depot'] || row['depot'] || 'HQ';
+        let qty = row['Qty'] || row['quantity'] || 0;
+        let condition = row['Condition'] || 'New';
+
+        if(name) {
+          inventory.push({
+            id: 'bulk-' + Math.random().toString(36).substring(2,7),
+            name: name.toString().trim(),
+            category: category.toString().trim(),
+            depot: depot.toString().trim(),
+            qty: Number(qty),
+            condition: condition.toString().trim()
+          });
+        }
+      });
+      saveToLocalStorage();
+      renderAll();
+      alert('Excel items merged into session storage successfully.');
+    } catch(err) { alert("Excel formatting error."); }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function escapeHtml(str){ const div = document.createElement('div'); div.textContent = str; return div.innerHTML; }
+
+document.getElementById('chips').addEventListener('click', (e) => {
+  const chip = e.target.closest('.chip'); if(!chip) return;
+  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+  chip.classList.add('active'); currentChannelFilter = chip.dataset.filter;
+  calculateCounters(); renderDashboardMatrix();
+});
+
+function exportToExcel(){
   const wb = XLSX.utils.book_new();
-  const flatData = [];
-
-  inventory.forEach(i => {
-    flatData.push({
-      'Item Name': i.name,
-      'Category': i.category,
-      'Depot': i.depot,
-      'Qty': i.qty,
-      'Condition': i.condition
-    });
-  });
-
-  const ws = XLSX.utils.json_to_sheet(flatData);
-  XLSX.utils.book_append_sheet(wb, ws, "Sales Tool Master Data");
-  XLSX.writeFile(wb, `Sales_Tool_Matrix_Report_${new Date().toISOString().slice(0,10)}.xlsx`);
+  const ws = XLSX.utils.json_to_sheet(inventory.map(i=>({'Item Name':i.name,'Category':i.category,'Depot':i.depot,'Qty':i.qty,'Condition':i.condition})));
+  XLSX.utils.book_append_sheet(wb, ws, 'Inventory');
+  XLSX.writeFile(wb, "Ajinomoto_Inventory_Matrix.xlsx");
 }
 
 function exportToJPG() {
-  const targetArea = document.getElementById('dashboardSnapshotArea');
-  const options = {
-    scale: 2, 
-    backgroundColor: '#EFE7D8', 
-    useCORS: true, 
-    logging: false
-  };
-
-  html2canvas(targetArea, options).then(canvas => {
-    const imgData = canvas.toDataURL('image/jpeg', 0.95);
-    const downloadLink = document.createElement('a');
-    downloadLink.href = imgData;
-    downloadLink.download = `Sales_Tool_Dashboard_Snapshot_${new Date().toISOString().slice(0,10)}.jpg`;
-    document.body.appendChild(downloadLink);
-    downloadLink.click();
-    document.body.removeChild(downloadLink);
-  }).catch(err => {
-    console.error("Snapshot export error:", err);
-    alert("An error occurred while downloading the image.");
+  html2canvas(document.getElementById('dashboardSnapshotArea'), { scale: 2, backgroundColor: '#EFE7D8', useCORS: true }).then(canvas => {
+    const a = document.createElement('a'); a.href = canvas.toDataURL('image/jpeg', 0.95); a.download = `Ajinomoto_Dashboard_Snapshot.jpg`; a.click();
   });
 }
 
-function escapeHtml(str) {
-  if (!str) return '';
-  return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
-}
-
-// Form Submission Event Listener
-document.getElementById('addForm').addEventListener('submit', function(e) {
-  e.preventDefault();
-  if(!isAdmin) return;
-
-  const nameInput = document.getElementById('f-name');
-  const catSelect = document.getElementById('f-category');
-  const depotSelect = document.getElementById('f-depot');
-  const qtyInput = document.getElementById('f-qty');
-  const condSelect = document.getElementById('f-condition');
-
-  const newItem = {
-    id: 'item-manual-' + Date.now(),
-    name: nameInput.value.trim(),
-    category: catSelect.value,
-    depot: depotSelect.value,
-    qty: Number(qtyInput.value) || 0,
-    condition: condSelect.value
-  };
-
-  inventory.unshift(newItem);
-  nameInput.value = '';
-  qtyInput.value = '1';
-
-  calculateCounters();
-  renderDashboardMatrix();
-  saveInventory();
-});
-
-// Setup Chip Channels Filter click logic
-document.getElementById('chips').addEventListener('click', function(e) {
-  const clickTarget = e.target.closest('.chip');
-  if(!clickTarget) return;
-  
-  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-  clickTarget.classList.add('active');
-  
-  currentChannelFilter = clickTarget.getAttribute('data-filter');
-  calculateCounters();
-  renderDashboardMatrix();
-});
-
-// Drag and drop event handlers
-const dropZone = document.querySelector('.bulk-upload-zone');
-if(dropZone) {
-  ['dragenter', 'dragover'].forEach(eventName => {
-    dropZone.addEventListener(eventName, (e) => { e.preventDefault(); dropZone.style.background = '#fff'; }, false);
-  });
-  ['dragleave', 'drop'].forEach(eventName => {
-    dropZone.addEventListener(eventName, (e) => { e.preventDefault(); dropZone.style.background = 'rgba(255,255,255,0.4)'; }, false);
-  });
-  dropZone.addEventListener('drop', (e) => {
-    const dt = e.dataTransfer;
-    const files = dt.files;
-    if(files.length > 0) {
-      document.getElementById('excelFileInput').files = files;
-      handleBulkExcelUpload({ target: { files: files } });
-    }
-  }, false);
-}
-
-// Bootstrap Init Trigger System
-window.addEventListener('DOMContentLoaded', () => {
-  checkAuthSecurity();
-  loadData();
-});
+checkAuthSecurity();
+loadInitialData();
 </script>
 </body>
 </html>
