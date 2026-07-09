@@ -186,7 +186,6 @@
   
   .matrix-container-layout { display: flex; flex-direction: column; gap: 24px; }
   
-  /* পরিবর্তন: ড্যাশবোর্ডের স্ক্রিনের বাইরে ইমেজ ওভারফ্লো প্রটেকশন */
   .cat-group-segment { display: flex; flex-direction: column; gap: 0px; border-radius: 4px; border: 1px solid var(--line); position: relative; }
   .cat-header-label-badge { font-family: 'Oswald', sans-serif; font-size: 14px; font-weight: 600; color: white; padding: 6px 14px; text-transform: uppercase; letter-spacing: 1.5px; align-self: flex-start; border-radius: 4px 12px 0 0; }
   
@@ -202,7 +201,6 @@
   .cell-name-wrapper { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; }
   .sku-meta-inline { display: flex; align-items: center; gap: 12px; position: relative; }
   
-  /* নতুন উন্নত স্মার্ট জুম লেআউট */
   .sku-img-preview { 
     width: 38px; 
     height: 38px; 
@@ -212,22 +210,23 @@
     background: #fdfdfd;
     cursor: pointer;
     transition: transform 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.25s ease;
-    transform-origin: left center; /* বাম থেকে ডানে সুন্দর জুম ইফেক্ট */
+    transform-origin: left center; 
     position: relative;
     z-index: 1;
   }
 
-  /* মাউস হোভার করলে ২.৫ গুন বড় হয়ে ভাসমান বক্সে রূপ নিবে এবং ড্যাশবোর্ডের ভেতরে থাকবে */
-  .sku-img-preview:hover {
-    transform: scale(6.0) translateX(4px); 
-    z-index: 999;
-    box-shadow: 4px 6px 15px rgba(0,0,0,0.25);
-    border-color: var(--ink);
-  }
-
-  /* একদম নিচের টেবিল রোগুলোর ছবি যেন নিচে স্ক্রিনের বাইরে কেটে না যায় */
-  .matrix-data-table tr:nth-last-child(-n+2) .sku-img-preview {
-    transform-origin: left bottom;
+  /* Improved Smart Hover Zoom Layout */
+  @media (hover: hover) {
+    .sku-img-preview:not(.no-hover):hover {
+      transform: scale(6.0) translateX(4px); 
+      z-index: 999;
+      box-shadow: 4px 6px 15px rgba(0,0,0,0.25);
+      border-color: var(--ink);
+    }
+    .matrix-data-table tr:nth-last-child(-n+2) .sku-img-preview:not(.no-hover):hover {
+      transform: scale(6.0) translateX(4px) translateY(-10px);
+      transform-origin: left bottom;
+    }
   }
 
   .item-delete-inline-btn { background: transparent; border: none; cursor: pointer; font-size: 14px; padding: 2px 6px; border-radius: 3px; opacity: 0.4; display: none; }
@@ -246,7 +245,7 @@
   form.add-form button{ font-family:'Oswald', sans-serif; letter-spacing: 1.5px; text-transform: uppercase; font-size: 12px; font-weight: 600; border: none; border-radius: 4px; background: var(--ink); color: var(--paper-light); padding: 10px 16px; cursor: pointer; }
 
   .bulk-upload-zone { margin-top: 15px; border: 2px dashed var(--line); border-radius: 6px; padding: 20px; text-align: center; background: rgba(255, 255, 255, 0.4); cursor: pointer; }
-  .bulk-upload-zone:hover { background: #fff; border-color: var(--std); }
+  .bulk-upload-zone:hover { background: #fff; border-color: var(--ink); }
   #excelFileInput { display: none; }
 
   .footnote{ margin-top: 20px; font-family:'IBM Plex Mono', monospace; font-size: 11px; color: var(--ink-soft); text-align:center; }
@@ -499,7 +498,6 @@ function renderDashboardMatrix(){
           <td>
             <div class="cell-name-wrapper">
               <div class="sku-meta-inline">
-                <!-- আপডেট করা ক্লাসের সাথে ইমেজ ট্যাগ -->
                 <img src="${imgSrc}" class="sku-img-preview" alt="${escapeHtml(r.name)}" crossorigin="anonymous" />
                 <span>${escapeHtml(r.name)}</span>
               </div>
@@ -604,9 +602,24 @@ function exportToExcel(){
 }
 
 function exportToJPG() {
-  html2canvas(document.getElementById('dashboardSnapshotArea'), { scale: 2, backgroundColor: '#EFE7D8', useCORS: true }).then(canvas => {
-    const a = document.createElement('a'); a.href = canvas.toDataURL('image/jpeg', 0.95); a.download = `Ajinomoto_Dashboard_Snapshot.jpg`; a.click();
-  });
+  const previews = document.querySelectorAll('.sku-img-preview');
+  previews.forEach(img => img.classList.add('no-hover'));
+
+  setTimeout(() => {
+    html2canvas(document.getElementById('dashboardSnapshotArea'), { 
+      scale: 2, 
+      backgroundColor: '#EFE7D8', 
+      useCORS: true,
+      logging: false
+    }).then(canvas => {
+      const a = document.createElement('a'); 
+      a.href = canvas.toDataURL('image/jpeg', 0.95); 
+      a.download = `Ajinomoto_Dashboard_Snapshot.jpg`; 
+      a.click();
+      
+      previews.forEach(img => img.classList.remove('no-hover'));
+    });
+  }, 50);
 }
 
 checkAuthSecurity();
