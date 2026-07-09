@@ -8,401 +8,400 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
 
-  :root{
-    --paper: #EFE7D8;
-    --paper-light: #FBF7EE;
-    --paper-dark: #DDD0B6;
-    --ink: #2A2723;
-    --ink-soft: #6B6358;
-    --line: rgba(42,39,35,0.16);
-    --red-base: #C92A2A;       
-    --red-active: #961C1C;     
-    --red-hover: #E03131;      
-    --color-sales-tool: #2E86AB;   
-    --color-promo: #E2953B;        
-    --color-giveaway: #843B8B;     
-    --color-asset: #8FA842;        
-    --color-old-sales-tool: #7A828A;
-  }
+  :root{
+    --paper: #EFE7D8;
+    --paper-light: #FBF7EE;
+    --paper-dark: #DDD0B6;
+    --ink: #2A2723;
+    --ink-soft: #6B6358;
+    --line: rgba(42,39,35,0.16);
+    --red-base: #C92A2A;       
+    --red-active: #961C1C;     
+    --red-hover: #E03131;      
+    --color-sales-tool: #2E86AB;   
+    --color-promo: #E2953B;        
+    --color-giveaway: #843B8B;     
+    --color-asset: #8FA842;        
+    --color-old-sales-tool: #7A828A;
+  }
 
-  *{ box-sizing: border-box; }
+  *{ box-sizing: border-box; }
 
-  body{
-    margin:0;
-    background: var(--paper);
-    background-image: radial-gradient(circle at 1px 1px, rgba(42,39,35,0.05) 1px, transparent 1px);
-    background-size: 22px 22px;
-    color: var(--ink);
-    font-family: 'IBM Plex Sans', sans-serif;
-    -webkit-font-smoothing: antialiased;
-    padding: 24px 20px 60px;
-  }
+  body{
+    margin:0;
+    background: var(--paper);
+    background-image: radial-gradient(circle at 1px 1px, rgba(42,39,35,0.05) 1px, transparent 1px);
+    background-size: 22px 22px;
+    color: var(--ink);
+    font-family: 'IBM Plex Sans', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    padding: 24px 20px 60px;
+  }
 
-  .wrap{ max-width: 1350px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
+  .wrap{ max-width: 1350px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
 
-  header{
-    background: var(--ink);
-    color: var(--paper-light);
-    border-radius: 6px;
-    padding: 22px 26px;
-    position: relative;
-    overflow: hidden;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 16px;
-  }
-  header::before{
-    content:'';
-    position:absolute; inset:0;
-    background-image: repeating-linear-gradient(135deg, rgba(255,255,255,0.04) 0 10px, transparent 10px 20px);
-    pointer-events:none;
-  }
-  .header-text h1{
-    font-family:'Oswald', sans-serif;
-    font-weight:700;
-    letter-spacing: 3px;
-    font-size: clamp(22px, 4vw, 32px);
-    margin: 0;
-    text-transform: uppercase;
-  }
-  .header-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
-  
-  .export-btn, .jpg-btn{
-    position: relative;
-    z-index: 1;
-    font-family:'Oswald', sans-serif;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    font-size: 12px;
-    font-weight: 600;
-    border-radius: 4px;
-    padding: 10px 20px;
-    cursor: pointer;
-    transition: all .15s ease;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .export-btn {
-    border: 1.5px solid var(--paper-light);
-    background: transparent;
-    color: var(--paper-light);
-  }
-  .export-btn:hover{ background: var(--paper-light); color: var(--ink); }
+  header{
+    background: var(--ink);
+    color: var(--paper-light);
+    border-radius: 6px;
+    padding: 22px 26px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  header::before{
+    content:'';
+    position:absolute; inset:0;
+    background-image: repeating-linear-gradient(135deg, rgba(255,255,255,0.04) 0 10px, transparent 10px 20px);
+    pointer-events:none;
+  }
+  .header-text h1{
+    font-family:'Oswald', sans-serif;
+    font-weight:700;
+    letter-spacing: 3px;
+    font-size: clamp(22px, 4vw, 32px);
+    margin: 0;
+    text-transform: uppercase;
+  }
+  .header-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  
+  .export-btn, .jpg-btn{
+    position: relative;
+    z-index: 1;
+    font-family:'Oswald', sans-serif;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: 4px;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: all .15s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .export-btn {
+    border: 1.5px solid var(--paper-light);
+    background: transparent;
+    color: var(--paper-light);
+  }
+  .export-btn:hover{ background: var(--paper-light); color: var(--ink); }
 
-  .jpg-btn {
-    border: 1.5px solid var(--red-base);
-    background: var(--red-base);
-    color: #ffffff;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  }
-  .jpg-btn:hover { background: var(--red-hover); border-color: var(--red-hover); }
+  .jpg-btn {
+    border: 1.5px solid var(--red-base);
+    background: var(--red-base);
+    color: #ffffff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  .jpg-btn:hover { background: var(--red-hover); border-color: var(--red-hover); }
 
-  .snapshot-target {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    padding: 10px;
-    background: var(--paper); 
-    border-radius: 4px;
-  }
+  .snapshot-target {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 10px;
+    background: var(--paper); 
+    border-radius: 4px;
+  }
 
-  .top-counters {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 12px;
-  }
-  @media (max-width: 1200px) { .top-counters { grid-template-columns: repeat(3, 1fr); } }
-  @media (max-width: 768px) { .top-counters { grid-template-columns: repeat(2, 1fr); } }
-  @media (max-width: 480px) { .top-counters { grid-template-columns: 1fr; } }
-  
-  .counter-box {
-    background: var(--paper-light);
-    border: 1px solid var(--line);
-    border-radius: 6px;
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    gap: 12px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-    border-left: 5px solid var(--ink);
-    height: 180px;
-  }
-  .counter-box.sales-tool { border-left-color: var(--color-sales-tool); }
-  .counter-box.promo { border-left-color: var(--color-promo); }
-  .counter-box.giveaway { border-left-color: var(--color-giveaway); }
-  .counter-box.asset { border-left-color: var(--color-asset); }
-  .counter-box.old-sales-tool { border-left-color: var(--color-old-sales-tool); }
+  .top-counters {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+  }
+  @media (max-width: 1200px) { .top-counters { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 768px) { .top-counters { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 480px) { .top-counters { grid-template-columns: 1fr; } }
+  
+  .counter-box {
+    background: var(--paper-light);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 12px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    border-left: 5px solid var(--ink);
+    height: 180px;
+  }
+  .counter-box.sales-tool { border-left-color: var(--color-sales-tool); }
+  .counter-box.promo { border-left-color: var(--color-promo); }
+  .counter-box.giveaway { border-left-color: var(--color-giveaway); }
+  .counter-box.asset { border-left-color: var(--color-asset); }
+  .counter-box.old-sales-tool { border-left-color: var(--color-old-sales-tool); }
 
-  .counter-main-data { display: flex; flex-direction: column; gap: 2px; }
-  .counter-title { font-family: 'Oswald', sans-serif; font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--ink-soft); }
-  .counter-value { font-family: 'IBM Plex Mono', monospace; font-size: 26px; font-weight: 700; color: var(--ink); }
+  .counter-main-data { display: flex; flex-direction: column; gap: 2px; }
+  .counter-title { font-family: 'Oswald', sans-serif; font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--ink-soft); }
+  .counter-value { font-family: 'IBM Plex Mono', monospace; font-size: 26px; font-weight: 700; color: var(--ink); }
 
-  .inner-sub-metrics {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    border-top: 1px dashed var(--line);
-    padding-top: 8px;
-    margin-top: auto;
-    overflow-y: auto;
-    max-height: 85px;
-  }
-  .inner-sub-metrics::-webkit-scrollbar { display: none; }
-  .inner-sub-metrics { -ms-overflow-style: none; scrollbar-width: none; }
+  .inner-sub-metrics {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    border-top: 1px dashed var(--line);
+    padding-top: 8px;
+    margin-top: auto;
+    overflow-y: auto;
+    max-height: 85px;
+  }
+  .inner-sub-metrics::-webkit-scrollbar { display: none; }
+  .inner-sub-metrics { -ms-overflow-style: none; scrollbar-width: none; }
 
-  .sub-metric-item {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    background: rgba(42,39,35,0.04);
-    padding: 2px 6px;
-    border-radius: 4px;
-    border: 1px solid rgba(42,39,35,0.06);
-  }
-  .sub-metric-label { font-family: 'IBM Plex Sans', sans-serif; font-size: 10px; color: var(--ink-soft); text-transform: uppercase; font-weight: 600; }
-  .sub-metric-val { font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 700; color: var(--ink); background: #fff; padding: 0px 4px; border-radius: 2px; border: 1px solid rgba(42,39,35,0.1); }
+  .sub-metric-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(42,39,35,0.04);
+    padding: 2px 6px;
+    border-radius: 4px;
+    border: 1px solid rgba(42,39,35,0.06);
+  }
+  .sub-metric-label { font-family: 'IBM Plex Sans', sans-serif; font-size: 10px; color: var(--ink-soft); text-transform: uppercase; font-weight: 600; }
+  .sub-metric-val { font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 700; color: var(--ink); background: #fff; padding: 0px 4px; border-radius: 2px; border: 1px solid rgba(42,39,35,0.1); }
 
-  .chips{ display:flex; gap:10px; flex-wrap:wrap; margin: 5px 0; }
-  .chip{
-    font-family:'IBM Plex Mono', monospace;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    padding: 8px 16px;
-    border: 1.5px solid var(--red-base);
-    border-radius: 4px;
-    background: var(--red-base);
-    cursor: pointer;
-    color: #FFFFFF;
-    transition: all .15s ease;
-  }
-  .chip:hover{ background: var(--red-hover); border-color: var(--red-hover); }
-  .chip.active{ background: var(--red-active); color: #FFFFFF; border-color: var(--ink); box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); }
+  .chips{ display:flex; gap:10px; flex-wrap:wrap; margin: 5px 0; }
+  .chip{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 8px 16px;
+    border: 1.5px solid var(--red-base);
+    border-radius: 4px;
+    background: var(--red-base);
+    cursor: pointer;
+    color: #FFFFFF;
+    transition: all .15s ease;
+  }
+  .chip:hover{ background: var(--red-hover); border-color: var(--red-hover); }
+  .chip.active{ background: var(--red-active); color: #FFFFFF; border-color: var(--ink); box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); }
 
-  .panel{ background: var(--paper-light); border: 1px solid var(--line); border-radius: 6px; padding: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
-  .panel h2{ font-family:'Oswald', sans-serif; text-transform: uppercase; letter-spacing: 2px; font-size: 18px; margin: 0 0 16px; display:flex; align-items:center; gap:10px; }
-  
-  .matrix-container-layout { display: flex; flex-direction: column; gap: 24px; }
-  
-  .cat-group-segment { display: flex; flex-direction: column; gap: 0px; border-radius: 4px; border: 1px solid var(--line); position: relative; }
-  .cat-header-label-badge { font-family: 'Oswald', sans-serif; font-size: 14px; font-weight: 600; color: white; padding: 6px 14px; text-transform: uppercase; letter-spacing: 1.5px; align-self: flex-start; border-radius: 4px 12px 0 0; }
-  
-  .matrix-data-table { width: 100%; border-collapse: collapse; font-size: 13px; background: #fff; }
-  .matrix-data-table th { font-family: 'Oswald', sans-serif; color: white; font-weight: 500; padding: 10px 12px; text-align: left; letter-spacing: 1px; text-transform: uppercase; border: 1px solid rgba(255,255,255,0.15); }
-  
-  .matrix-data-table th:first-child, .matrix-data-table td:first-child { width: 40%; font-weight: 500; }
-  .matrix-data-table th:not(:first-child), .matrix-data-table td:not(:first-child) { width: 10%; text-align: center; }
-  .matrix-data-table td { padding: 8px 12px; border: 1px solid var(--line); color: var(--ink); }
-  .matrix-data-table tr { position: relative; transition: background-color 0.15s ease; }
-  .matrix-data-table tr:nth-child(even) { background: var(--paper-light); }
-  .matrix-data-table td.item-total-col { font-weight: 700; background: #FFFDF9; border-left: 1.5px solid var(--line); }
+  .panel{ background: var(--paper-light); border: 1px solid var(--line); border-radius: 6px; padding: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+  .panel h2{ font-family:'Oswald', sans-serif; text-transform: uppercase; letter-spacing: 2px; font-size: 18px; margin: 0 0 16px; display:flex; align-items:center; gap:10px; }
+  
+  .matrix-container-layout { display: flex; flex-direction: column; gap: 24px; }
+  
+  .cat-group-segment { display: flex; flex-direction: column; gap: 0px; border-radius: 4px; border: 1px solid var(--line); position: relative; }
+  .cat-header-label-badge { font-family: 'Oswald', sans-serif; font-size: 14px; font-weight: 600; color: white; padding: 6px 14px; text-transform: uppercase; letter-spacing: 1.5px; align-self: flex-start; border-radius: 4px 12px 0 0; }
+  
+  .matrix-data-table { width: 100%; border-collapse: collapse; font-size: 13px; background: #fff; }
+  .matrix-data-table th { font-family: 'Oswald', sans-serif; color: white; font-weight: 500; padding: 10px 12px; text-align: left; letter-spacing: 1px; text-transform: uppercase; border: 1px solid rgba(255,255,255,0.15); }
+  
+  .matrix-data-table th:first-child, .matrix-data-table td:first-child { width: 40%; font-weight: 500; }
+  .matrix-data-table th:not(:first-child), .matrix-data-table td:not(:first-child) { width: 10%; text-align: center; }
+  .matrix-data-table td { padding: 8px 12px; border: 1px solid var(--line); color: var(--ink); }
+  .matrix-data-table tr { position: relative; transition: background-color 0.15s ease; }
+  .matrix-data-table tr:nth-child(even) { background: var(--paper-light); }
+  .matrix-data-table td.item-total-col { font-weight: 700; background: #FFFDF9; border-left: 1.5px solid var(--line); }
 
-  .cell-name-wrapper { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; }
-  .sku-meta-inline { display: flex; align-items: center; gap: 12px; position: relative; }
-  
-  .sku-img-preview { 
-    width: 38px; 
-    height: 38px; 
-    object-fit: cover; 
-    border-radius: 4px; 
-    border: 1px solid var(--line);
-    background: #fdfdfd;
-    cursor: pointer;
-    transition: transform 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.25s ease;
-    transform-origin: left center; 
-    position: relative;
-    z-index: 1;
-  }
+  .cell-name-wrapper { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; }
+  .sku-meta-inline { display: flex; align-items: center; gap: 12px; position: relative; }
+  
+  .sku-img-preview { 
+    width: 38px; 
+    height: 38px; 
+    object-fit: cover; 
+    border-radius: 4px; 
+    border: 1px solid var(--line);
+    background: #fdfdfd;
+    cursor: pointer;
+    transition: transform 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.25s ease;
+    transform-origin: left center; 
+    position: relative;
+    z-index: 1;
+  }
 
-  /* Structural stacking context fixes for pure CSS layout scaling */
-  .matrix-data-table tr:hover {
-    z-index: 10;
-  }
+  .matrix-data-table tr:hover {
+    z-index: 10;
+  }
 
-  @media (hover: hover) {
-    .sku-img-preview:not(.no-hover):hover {
-      transform: scale(6.0) translateX(4px); 
-      z-index: 999;
-      box-shadow: 4px 6px 15px rgba(0,0,0,0.25);
-      border-color: var(--ink);
-    }
-    .matrix-data-table tr:nth-last-child(-n+2) .sku-img-preview:not(.no-hover):hover {
-      transform: scale(6.0) translateX(4px) translateY(-10px);
-      transform-origin: left bottom;
-    }
-  }
+  @media (hover: hover) {
+    .sku-img-preview:not(.no-hover):hover {
+      transform: scale(6.0) translateX(4px); 
+      z-index: 999;
+      box-shadow: 4px 6px 15px rgba(0,0,0,0.25);
+      border-color: var(--ink);
+    }
+    .matrix-data-table tr:nth-last-child(-n+2) .sku-img-preview:not(.no-hover):hover {
+      transform: scale(6.0) translateX(4px) translateY(-10px);
+      transform-origin: left bottom;
+    }
+  }
 
-  .item-delete-inline-btn { background: transparent; border: none; cursor: pointer; font-size: 14px; padding: 2px 6px; border-radius: 3px; opacity: 0.4; display: none; }
-  .admin-mode .matrix-data-table tr:hover .item-delete-inline-btn { display: inline-block; opacity: 1; }
-  .item-delete-inline-btn:hover { background: rgba(217, 72, 58, 0.15); opacity: 1; }
+  .item-delete-inline-btn { background: transparent; border: none; cursor: pointer; font-size: 14px; padding: 2px 6px; border-radius: 3px; opacity: 0.4; display: none; }
+  .admin-mode .matrix-data-table tr:hover .item-delete-inline-btn { display: inline-block; opacity: 1; }
+  .item-delete-inline-btn:hover { background: rgba(217, 72, 58, 0.15); opacity: 1; }
 
-  .segment-sales-tool .cat-header-label-badge, .segment-sales-tool .matrix-data-table th { background-color: var(--color-sales-tool); }
-  .segment-promo .cat-header-label-badge, .segment-promo .matrix-data-table th { background-color: var(--color-promo); }
-  .segment-giveaway .cat-header-label-badge, .segment-giveaway .matrix-data-table th { background-color: var(--color-giveaway); }
-  .segment-asset .cat-header-label-badge, .segment-asset .matrix-data-table th { background-color: var(--color-asset); }
-  .segment-old-sales-tool .cat-header-label-badge, .segment-old-sales-tool .matrix-data-table th { background-color: var(--color-old-sales-tool); }
+  .segment-sales-tool .cat-header-label-badge, .segment-sales-tool .matrix-data-table th { background-color: var(--color-sales-tool); }
+  .segment-promo .cat-header-label-badge, .segment-promo .matrix-data-table th { background-color: var(--color-promo); }
+  .segment-giveaway .cat-header-label-badge, .segment-giveaway .matrix-data-table th { background-color: var(--color-giveaway); }
+  .segment-asset .cat-header-label-badge, .segment-asset .matrix-data-table th { background-color: var(--color-asset); }
+  .segment-old-sales-tool .cat-header-label-badge, .segment-old-sales-tool .matrix-data-table th { background-color: var(--color-old-sales-tool); }
 
-  form.add-form{ display:grid; grid-template-columns: 2fr 1.2fr 1fr 0.6fr 0.9fr auto; gap: 8px; margin-top: 10px; }
-  @media (max-width: 768px){ form.add-form{ grid-template-columns: 1fr 1fr; } }
-  form.add-form input, form.add-form select{ font-family:'IBM Plex Sans', sans-serif; font-size: 13px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 4px; background: #fff; color: var(--ink); outline: none; }
-  form.add-form button{ font-family:'Oswald', sans-serif; letter-spacing: 1.5px; text-transform: uppercase; font-size: 12px; font-weight: 600; border: none; border-radius: 4px; background: var(--ink); color: var(--paper-light); padding: 10px 16px; cursor: pointer; }
+  form.add-form{ display:grid; grid-template-columns: 2fr 1.2fr 1fr 0.6fr 0.9fr auto; gap: 8px; margin-top: 10px; }
+  @media (max-width: 768px){ form.add-form{ grid-template-columns: 1fr 1fr; } }
+  form.add-form input, form.add-form select{ font-family:'IBM Plex Sans', sans-serif; font-size: 13px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 4px; background: #fff; color: var(--ink); outline: none; }
+  form.add-form button{ font-family:'Oswald', sans-serif; letter-spacing: 1.5px; text-transform: uppercase; font-size: 12px; font-weight: 600; border: none; border-radius: 4px; background: var(--ink); color: var(--paper-light); padding: 10px 16px; cursor: pointer; }
 
-  .bulk-upload-zone { margin-top: 15px; border: 2px dashed var(--line); border-radius: 6px; padding: 20px; text-align: center; background: rgba(255, 255, 255, 0.4); cursor: pointer; }
-  .bulk-upload-zone:hover { background: #fff; border-color: var(--ink); }
-  #excelFileInput { display: none; }
+  .bulk-upload-zone { margin-top: 15px; border: 2px dashed var(--line); border-radius: 6px; padding: 20px; text-align: center; background: rgba(255, 255, 255, 0.4); cursor: pointer; }
+  .bulk-upload-zone:hover { background: #fff; border-color: var(--ink); }
+  #excelFileInput { display: none; }
 
-  .footnote{ margin-top: 20px; font-family:'IBM Plex Mono', monospace; font-size: 11px; color: var(--ink-soft); text-align:center; }
-  .admin-only { display: none !important; }
-  .admin-mode .admin-only { display: block !important; }
-  .admin-mode form.admin-only { display: grid !important; }
+  .footnote{ margin-top: 20px; font-family:'IBM Plex Mono', monospace; font-size: 11px; color: var(--ink-soft); text-align:center; }
+  .admin-only { display: none !important; }
+  .admin-mode .admin-only { display: block !important; }
+  .admin-mode form.admin-only { display: grid !important; }
 </style>
 </head>
 <body>
 <div class="wrap">
 
-  <header>
-    <div class="header-text">
-      <h1>Ajinomoto Sales Tool Dashboard</h1>
-    </div>
-    <div class="header-actions">
-      <button class="jpg-btn" onclick="exportToJPG()">Download JPG</button>
-      <button class="export-btn" onclick="exportToExcel()">Export Report</button>
-    </div>
-  </header>
+  <header>
+    <div class="header-text">
+      <h1>Ajinomoto Sales Tool Dashboard</h1>
+    </div>
+    <div class="header-actions">
+      <button class="jpg-btn" onclick="exportToJPG()">Download JPG</button>
+      <button class="export-btn" onclick="exportToExcel()">Export Report</button>
+    </div>
+  </header>
 
-  <div class="snapshot-target" id="dashboardSnapshotArea">
-    <div class="top-counters">
-      <div class="counter-box sales-tool">
-        <div class="counter-main-data"><span class="counter-title">Sales Tool Total</span><span class="counter-value" id="countSalesTool">0</span></div>
-        <div class="inner-sub-metrics" id="subContainer-Sales-Tool"></div>
-      </div>
-      <div class="counter-box promo">
-        <div class="counter-main-data"><span class="counter-title">Promotional Total</span><span class="counter-value" id="countPromo">0</span></div>
-        <div class="inner-sub-metrics" id="subContainer-Promotional-Item"></div>
-      </div>
-      <div class="counter-box giveaway">
-        <div class="counter-main-data"><span class="counter-title">Give-Away Total</span><span class="counter-value" id="countGiveaway">0</span></div>
-        <div class="inner-sub-metrics" id="subContainer-Give-Away"></div>
-      </div>
-      <div class="counter-box asset">
-        <div class="counter-main-data"><span class="counter-title">Asset Total</span><span class="counter-value" id="countAsset">0</span></div>
-        <div class="inner-sub-metrics" id="subContainer-Asset"></div>
-      </div>
-      <div class="counter-box old-sales-tool">
-        <div class="counter-main-data"><span class="counter-title">Old Sales Tool Total</span><span class="counter-value" id="countOldSalesTool">0</span></div>
-        <div class="inner-sub-metrics" id="subContainer-Old-Sales-Tool"></div>
-      </div>
-    </div>
+  <div class="snapshot-target" id="dashboardSnapshotArea">
+    <div class="top-counters">
+      <div class="counter-box sales-tool">
+        <div class="counter-main-data"><span class="counter-title">Sales Tool Total</span><span class="counter-value" id="countSalesTool">0</span></div>
+        <div class="inner-sub-metrics" id="subContainer-Sales-Tool"></div>
+      </div>
+      <div class="counter-box promo">
+        <div class="counter-main-data"><span class="counter-title">Promotional Total</span><span class="counter-value" id="countPromo">0</span></div>
+        <div class="inner-sub-metrics" id="subContainer-Promotional-Item"></div>
+      </div>
+      <div class="counter-box giveaway">
+        <div class="counter-main-data"><span class="counter-title">Give-Away Total</span><span class="counter-value" id="countGiveaway">0</span></div>
+        <div class="inner-sub-metrics" id="subContainer-Give-Away"></div>
+      </div>
+      <div class="counter-box asset">
+        <div class="counter-main-data"><span class="counter-title">Asset Total</span><span class="counter-value" id="countAsset">0</span></div>
+        <div class="inner-sub-metrics" id="subContainer-Asset"></div>
+      </div>
+      <div class="counter-box old-sales-tool">
+        <div class="counter-main-data"><span class="counter-title">Old Sales Tool Total</span><span class="counter-value" id="countOldSalesTool">0</span></div>
+        <div class="inner-sub-metrics" id="subContainer-Old-Sales-Tool"></div>
+      </div>
+    </div>
 
-    <div class="chips" id="chips">
-      <div class="chip active" data-filter="all">All Depots</div>
-      <div class="chip" data-filter="HQ">HQ</div>
-      <div class="chip" data-filter="South Depot">South Depot</div>
-      <div class="chip" data-filter="North Depot">North Depot</div>
-      <div class="chip" data-filter="CTG Depot">CTG Depot</div>
-      <div class="chip" data-filter="Outside Dhaka">Outside Dhaka</div>
-    </div>
+    <div class="chips" id="chips">
+      <div class="chip active" data-filter="all">All Depots</div>
+      <div class="chip" data-filter="HQ">HQ</div>
+      <div class="chip" data-filter="South Depot">South Depot</div>
+      <div class="chip" data-filter="North Depot">North Depot</div>
+      <div class="chip" data-filter="CTG Depot">CTG Depot</div>
+      <div class="chip" data-filter="Outside Dhaka">Outside Dhaka</div>
+    </div>
 
-    <section class="panel">
-      <h2>Stock Analysis Matrix Grid</h2>
-      <div class="matrix-container-layout" id="matrixLayoutEngine"></div>
-    </section>
-  </div> 
+    <section class="panel">
+      <h2>Stock Analysis Matrix Grid</h2>
+      <div class="matrix-container-layout" id="matrixLayoutEngine"></div>
+    </section>
+  </div> 
 
-  <div style="display: flex; flex-direction: column; gap: 18px;">
-    <section class="panel admin-only">
-      <h2>Register Stock Item (Local Session)</h2>
-      <form class="add-form" id="addForm">
-        <input type="text" id="f-name" placeholder="Item name" required />
-        <select id="f-category">
-          <option>Sales Tool</option>
-          <option>Promotional Item</option>
-          <option>Give-Away</option>
-          <option>Asset</option>
-          <option>Old Sales Tool</option>
-        </select>
-        <select id="f-depot">
-          <option>HQ</option>
-          <option>South Depot</option>
-          <option>North Depot</option>
-          <option>CTG Depot</option>
-          <option>Outside Dhaka</option>
-        </select>
-        <input type="number" id="f-qty" placeholder="Qty" min="0" value="1" required />
-        <select id="f-condition"><option>New</option><option>Working</option><option>Used</option><option>Unused</option><option>Broken</option></select>
-        <button type="submit">Add Item</button>
-      </form>
-    </section>
+  <div style="display: flex; flex-direction: column; gap: 18px;">
+    <section class="panel admin-only">
+      <h2>Register Stock Item (Local Session)</h2>
+      <form class="add-form" id="addForm">
+        <input type="text" id="f-name" placeholder="Item name" required />
+        <select id="f-category">
+          <option>Sales Tool</option>
+          <option>Promotional Item</option>
+          <option>Give-Away</option>
+          <option>Asset</option>
+          <option>Old Sales Tool</option>
+        </select>
+        <select id="f-depot">
+          <option>HQ</option>
+          <option>South Depot</option>
+          <option>North Depot</option>
+          <option>CTG Depot</option>
+          <option>Outside Dhaka</option>
+        </select>
+        <input type="number" id="f-qty" placeholder="Qty" min="0" value="1" required />
+        <select id="f-condition"><option>New</option><option>Working</option><option>Used</option><option>Unused</option><option>Broken</option></select>
+        <button type="submit">Add Item</button>
+      </form>
+    </section>
 
-    <section class="panel admin-only">
-      <h2>Bulk Import Excel Data Temporary</h2>
-      <div class="bulk-upload-zone" onclick="document.getElementById('excelFileInput').click()">
-        <p>📁 Click or Drag & Drop Excel File (.xlsx)</p>
-        <span>Expected Fields: Item Name | Category | Depot | Qty | Condition</span>
-      </div>
-      <input type="file" id="excelFileInput" accept=".xlsx, .xls" onchange="handleBulkExcelUpload(event)" />
-    </section>
-  </div>
+    <section class="panel admin-only">
+      <h2>Bulk Import Excel Data Temporary</h2>
+      <div class="bulk-upload-zone" onclick="document.getElementById('excelFileInput').click()">
+        <p>📁 Click or Drag & Drop Excel File (.xlsx)</p>
+        <span>Expected Fields: Item Name | Category | Depot | Qty | Condition</span>
+      </div>
+      <input type="file" id="excelFileInput" accept=".xlsx, .xls" onchange="handleBulkExcelUpload(event)" />
+    </section>
+  </div>
 
-  <div class="footnote">Ajinomoto Analytics Log · Data Mode: Hardcoded Static Engine with Asset Previews</div>
+  <div class="footnote">Ajinomoto Analytics Log · Data Mode: Hardcoded Static Engine with Asset Previews</div>
 </div>
 
 <script>
 const SKU_IMAGE_MAP = {
-  'Uniform': 'https://i.postimg.cc/XJj9CydF/Uniform.jpg',
-  'Uniform-BP': 'https://i.postimg.cc/FRHxsV4B/BP-Uniform.png',
-  'T-Shirt': 'https://i.postimg.cc/QtWG3Vn7/T-Shirt.png',
-  'Shirt': 'https://i.postimg.cc/523f7HD7/Shirt.png',
-  'Aji-Paper Hanger': 'https://i.postimg.cc/65XFtFSp/Paper-Hanger.png',
-  'Aji-Hanger': 'https://i.postimg.cc/Y2fbf0nc/Aji-Hanger.png',
-  'Hapima Hanger': 'https://i.postimg.cc/xdt4RCj4/Hapima-Hanger.png',
-  'Invoice': 'https://i.postimg.cc/D0DGHjHk/Invoice.jpg',
-  'Hand Bag': 'https://i.postimg.cc/PxH5mSJx/Hand-Bag.png',
-  'Refrigerator': 'https://i.postimg.cc/4xhzpgM5/Refrigaretor.png',
-  'Monitor': 'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=100&auto=format&fit=crop&q=60',
-  'Aji-Sticker': 'https://i.postimg.cc/d1gdSNgz/Aji-Sticker.jpg',
-  'Aji-leaflet': 'https://i.postimg.cc/2jh8HRvX/Whats-App-Image-2026-06-17-at-2-46-29-PM-removebg-preview.png',
-  'default': 'https://images.unsplash.com/photo-1531403009284-440f080d1e12?w=100&auto=format&fit=crop&q=60'
+  'Uniform': 'https://i.postimg.cc/XJj9CydF/Uniform.jpg',
+  'Uniform-BP': 'https://i.postimg.cc/FRHxsV4B/BP-Uniform.png',
+  'T-Shirt': 'https://i.postimg.cc/QtWG3Vn7/T-Shirt.png',
+  'Shirt': 'https://i.postimg.cc/523f7HD7/Shirt.png',
+  'Aji-Paper Hanger': 'https://i.postimg.cc/65XFtFSp/Paper-Hanger.png',
+  'Aji-Hanger': 'https://i.postimg.cc/Y2fbf0nc/Aji-Hanger.png',
+  'Hapima Hanger': 'https://i.postimg.cc/xdt4RCj4/Hapima-Hanger.png',
+  'Invoice': 'https://i.postimg.cc/D0DGHjHk/Invoice.jpg',
+  'Hand Bag': 'https://i.postimg.cc/PxH5mSJx/Hand-Bag.png',
+  'Refrigerator': 'https://i.postimg.cc/4xhzpgM5/Refrigaretor.png',
+  'Monitor': 'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=100&auto=format&fit=crop&q=60',
+  'Aji-Sticker': 'https://i.postimg.cc/d1gdSNgz/Aji-Sticker.jpg',
+  'Aji-leaflet': 'https://i.postimg.cc/2jh8HRvX/Whats-App-Image-2026-06-17-at-2-46-29-PM-removebg-preview.png',
+  'default': 'https://images.unsplash.com/photo-1531403009284-440f080d1e12?w=100&auto=format&fit=crop&q=60'
 };
 
 const HARDCODED_INVENTORY_DATA = [
-  { id: "e1", name: "Uniform", category: "Sales Tool", depot: "HQ", qty: 47, condition: "New" },
-  { id: "e2", name: "Uniform-BP", category: "Sales Tool", depot: "HQ", qty: 10, condition: "New" },
-  { id: "e4", name: "Aji-Sticker", category: "Old Sales Tool", depot: "South Depot", qty: 2150, condition: "Unused" },
-  { id: "e5", name: "Hand Bag", category: "Sales Tool", depot: "HQ", qty: 12, condition: "Unused" },
-  { id: "e6", name: "Shirt", category: "Promotional Item", depot: "HQ", qty: 35, condition: "Unused" },
-  { id: "e7", name: "T-Shirt", category: "Promotional Item", depot: "HQ", qty: 21, condition: "Unused" },
-  { id: "e8", name: "Aji-Sticker", category: "Old Sales Tool", depot: "HQ", qty: 2460, condition: "Unused" },
-  { id: "e10", name: "Aji-Hanger", category: "Old Sales Tool", depot: "HQ", qty: 1835, condition: "Unused" },
-  { id: "e11", name: "Aji-leaflet", category: "Old Sales Tool", depot: "HQ", qty: 1220, condition: "Unused" },
-  { id: "e12", name: "Hapima Hanger", category: "Old Sales Tool", depot: "HQ", qty: 355, condition: "Unused" },
-  { id: "e13", name: "Monitor", category: "Asset", depot: "South Depot", qty: 1, condition: "Unused" },
-  { id: "e14", name: "Refrigerator", category: "Asset", depot: "South Depot", qty: 1, condition: "Unused" },
-  { id: "e15", name: "Invoice", category: "Sales Tool", depot: "Outside Dhaka", qty: 184, condition: "New" },
-  { id: "e16", name: "Invoice", category: "Sales Tool", depot: "CTG Depot", qty: 10, condition: "New" },
-  { id: "e17", name: "Invoice", category: "Sales Tool", depot: "North Depot", qty: 3, condition: "New" },
-  { id: "e18", name: "Invoice", category: "Sales Tool", depot: "South Depot", qty: 7, condition: "New" },
-  { id: "e19", name: "Invoice", category: "Sales Tool", depot: "HQ", qty: 73, condition: "New" },
-  { id: "e20", name: "Aji-Paper Hanger", category: "Sales Tool", depot: "Outside Dhaka", qty: 358, condition: "New" },
-  { id: "e21", name: "Aji-Paper Hanger", category: "Sales Tool", depot: "CTG Depot", qty: 20, condition: "New" },
-  { id: "e22", name: "Aji-Paper Hanger", category: "Sales Tool", depot: "North Depot", qty: 100, condition: "New" },
-  { id: "e23", name: "Aji-Paper Hanger", category: "Sales Tool", depot: "South Depot", qty: 180, condition: "New" },
-  { id: "e24", name: "Aji-Paper Hanger", category: "Sales Tool", depot: "HQ", qty: 3560, condition: "New" }
+  { id: "e1", name: "Uniform", category: "Sales Tool", depot: "HQ", qty: 47, condition: "New" },
+  { id: "e2", name: "Uniform-BP", category: "Sales Tool", depot: "HQ", qty: 10, condition: "New" },
+  { id: "e4", name: "Aji-Sticker", category: "Old Sales Tool", depot: "South Depot", qty: 2150, condition: "Unused" },
+  { id: "e5", name: "Hand Bag", category: "Sales Tool", depot: "HQ", qty: 12, condition: "Unused" },
+  { id: "e6", name: "Shirt", category: "Promotional Item", depot: "HQ", qty: 35, condition: "Unused" },
+  { id: "e7", name: "T-Shirt", category: "Promotional Item", depot: "HQ", qty: 21, condition: "Unused" },
+  { id: "e8", name: "Aji-Sticker", category: "Old Sales Tool", depot: "HQ", qty: 2460, condition: "Unused" },
+  { id: "e10", name: "Aji-Hanger", category: "Old Sales Tool", depot: "HQ", qty: 1835, condition: "Unused" },
+  { id: "e11", name: "Aji-leaflet", category: "Old Sales Tool", depot: "HQ", qty: 1220, condition: "Unused" },
+  { id: "e12", name: "Hapima Hanger", category: "Old Sales Tool", depot: "HQ", qty: 355, condition: "Unused" },
+  { id: "e13", name: "Monitor", category: "Asset", depot: "South Depot", qty: 1, condition: "Unused" },
+  { id: "e14", name: "Refrigerator", category: "Asset", depot: "South Depot", qty: 1, condition: "Unused" },
+  { id: "e15", name: "Invoice", category: "Sales Tool", depot: "Outside Dhaka", qty: 184, condition: "New" },
+  { id: "e16", name: "Invoice", category: "Sales Tool", depot: "CTG Depot", qty: 10, condition: "New" },
+  { id: "e17", name: "Invoice", category: "Sales Tool", depot: "North Depot", qty: 3, condition: "New" },
+  { id: "e18", name: "Invoice", category: "Sales Tool", depot: "South Depot", qty: 7, condition: "New" },
+  { id: "e19", name: "Invoice", category: "Sales Tool", depot: "HQ", qty: 73, condition: "New" },
+  { id: "e20", name: "Aji-Paper Hanger", category: "Sales Tool", depot: "Outside Dhaka", qty: 358, condition: "New" },
+  { id: "e21", name: "Aji-Paper Hanger", category: "Sales Tool", depot: "CTG Depot", qty: 20, condition: "New" },
+  { id: "e22", name: "Aji-Paper Hanger", category: "Sales Tool", depot: "North Depot", qty: 100, condition: "New" },
+  { id: "e23", name: "Aji-Paper Hanger", category: "Sales Tool", depot: "South Depot", qty: 180, condition: "New" },
+  { id: "e24", name: "Aji-Paper Hanger", category: "Sales Tool", depot: "HQ", qty: 3560, condition: "New" }
 ];
 
 const CATEGORY_STYLES = {
-  'Sales Tool': { class: 'segment-sales-tool' },
-  'Promotional Item': { class: 'segment-promo' },
-  'Give-Away': { class: 'segment-giveaway' },
-  'Asset': { class: 'segment-asset' },
-  'Old Sales Tool': { class: 'segment-old-sales-tool' },
+  'Sales Tool': { class: 'segment-sales-tool' },
+  'Promotional Item': { class: 'segment-promo' },
+  'Give-Away': { class: 'segment-giveaway' },
+  'Asset': { class: 'segment-asset' },
+  'Old Sales Tool': { class: 'segment-old-sales-tool' },
 };
 
 let inventory = [];
@@ -410,222 +409,222 @@ let currentChannelFilter = 'all';
 let isAdmin = false;
 
 function checkAuthSecurity() {
-  const urlParams = new URLSearchParams(window.location.search);
-  if (urlParams.get('auth') === 'admin') {
-    isAdmin = true;
-    document.body.classList.add('admin-mode');
-  }
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get('auth') === 'admin') {
+    isAdmin = true;
+    document.body.classList.add('admin-mode');
+  }
 }
 
 function loadInitialData() {
-  const localSaved = localStorage.getItem('ajinomoto_local_inv');
-  if (localSaved) {
-    inventory = JSON.parse(localSaved);
-  } else {
-    inventory = [...HARDCODED_INVENTORY_DATA];
-  }
-  renderAll();
+  const localSaved = localStorage.getItem('ajinomoto_local_inv');
+  if (localSaved) {
+    inventory = JSON.parse(localSaved);
+  } else {
+    inventory = [...HARDCODED_INVENTORY_DATA];
+  }
+  renderAll();
 }
 
 function saveToLocalStorage() {
-  localStorage.setItem('ajinomoto_local_inv', JSON.stringify(inventory));
+  localStorage.setItem('ajinomoto_local_inv', JSON.stringify(inventory));
 }
 
 function renderAll(){
-  calculateCounters();
-  renderDashboardMatrix();
+  calculateCounters();
+  renderDashboardMatrix();
 }
 
 function calculateCounters(){
-  let catTotals = { 'Sales Tool': 0, 'Promotional Item': 0, 'Give-Away': 0, 'Asset': 0, 'Old Sales Tool': 0 };
-  let dynamicSubMaps = { 'Sales Tool': {}, 'Promotional Item': {}, 'Give-Away': {}, 'Asset': {}, 'Old Sales Tool': {} };
-  
-  inventory.forEach(i => {
-    if (currentChannelFilter === 'all' || i.depot === currentChannelFilter) {
-      if (catTotals[i.category] !== undefined) catTotals[i.category] += Number(i.qty || 0);
-      const itemName = i.name.trim();
-      if (dynamicSubMaps[i.category]) {
-        if (!dynamicSubMaps[i.category][itemName]) dynamicSubMaps[i.category][itemName] = 0;
-        dynamicSubMaps[i.category][itemName] += Number(i.qty || 0);
-      }
-    }
-  });
+  let catTotals = { 'Sales Tool': 0, 'Promotional Item': 0, 'Give-Away': 0, 'Asset': 0, 'Old Sales Tool': 0 };
+  let dynamicSubMaps = { 'Sales Tool': {}, 'Promotional Item': {}, 'Give-Away': {}, 'Asset': {}, 'Old Sales Tool': {} };
+  
+  inventory.forEach(i => {
+    if (currentChannelFilter === 'all' || i.depot === currentChannelFilter) {
+      if (catTotals[i.category] !== undefined) catTotals[i.category] += Number(i.qty || 0);
+      const itemName = i.name.trim();
+      if (dynamicSubMaps[i.category]) {
+        if (!dynamicSubMaps[i.category][itemName]) dynamicSubMaps[i.category][itemName] = 0;
+        dynamicSubMaps[i.category][itemName] += Number(i.qty || 0);
+      }
+    }
+  });
 
-  document.getElementById('countSalesTool').textContent = catTotals['Sales Tool'];
-  document.getElementById('countPromo').textContent = catTotals['Promotional Item'];
-  document.getElementById('countGiveaway').textContent = catTotals['Give-Away'];
-  document.getElementById('countAsset').textContent = catTotals['Asset'];
-  document.getElementById('countOldSalesTool').textContent = catTotals['Old Sales Tool'];
+  document.getElementById('countSalesTool').textContent = catTotals['Sales Tool'];
+  document.getElementById('countPromo').textContent = catTotals['Promotional Item'];
+  document.getElementById('countGiveaway').textContent = catTotals['Give-Away'];
+  document.getElementById('countAsset').textContent = catTotals['Asset'];
+  document.getElementById('countOldSalesTool').textContent = catTotals['Old Sales Tool'];
 
-  ['Sales Tool', 'Promotional Item', 'Give-Away', 'Asset', 'Old Sales Tool'].forEach(cat => {
-    const container = document.getElementById('subContainer-' + cat.replace(/\s+/g, '-'));
-    if (!container) return;
-    const subItemsMap = dynamicSubMaps[cat];
-    const uniqueKeys = Object.keys(subItemsMap);
-    
-    if (uniqueKeys.length === 0) {
-      container.innerHTML = `<span style="font-size:10px; color:var(--ink-soft); font-style:italic;">Empty</span>`;
-    } else {
-      container.innerHTML = uniqueKeys.map(key => `
-        <div class="sub-metric-item" title="${escapeHtml(key)}">
-          <span class="sub-metric-label">${escapeHtml(key)}</span>
-          <span class="sub-metric-val">${subItemsMap[key]}</span>
-        </div>
-      `).join('');
-    }
-  });
+  ['Sales Tool', 'Promotional Item', 'Give-Away', 'Asset', 'Old Sales Tool'].forEach(cat => {
+    const container = document.getElementById('subContainer-' + cat.replace(/\s+/g, '-'));
+    if (!container) return;
+    const subItemsMap = dynamicSubMaps[cat];
+    const uniqueKeys = Object.keys(subItemsMap);
+    
+    if (uniqueKeys.length === 0) {
+      container.innerHTML = `<span style="font-size:10px; color:var(--ink-soft); font-style:italic;">Empty</span>`;
+    } else {
+      container.innerHTML = uniqueKeys.map(key => `
+        <div class="sub-metric-item" title="${escapeHtml(key)}">
+          <span class="sub-metric-label">${escapeHtml(key)}</span>
+          <span class="sub-metric-val">${subItemsMap[key]}</span>
+        </div>
+      `).join('');
+    }
+  });
 }
 
 function renderDashboardMatrix(){
-  const container = document.getElementById('matrixLayoutEngine');
-  const distinctCategories = ['Sales Tool', 'Promotional Item', 'Give-Away', 'Asset', 'Old Sales Tool'];
-  
-  container.innerHTML = distinctCategories.map(cat => {
-    const styleCfg = CATEGORY_STYLES[cat];
-    let poolItems = inventory.filter(i => i.category === cat);
-    if(currentChannelFilter !== 'all') poolItems = poolItems.filter(i => i.depot === currentChannelFilter);
-    
-    const processedMap = {};
-    poolItems.forEach(i => {
-      const itemKey = i.name.trim();
-      if(!processedMap[itemKey]){
-        processedMap[itemKey] = { name: itemKey, 'HQ': 0, 'South Depot': 0, 'North Depot': 0, 'CTG Depot': 0, 'Outside Dhaka': 0, subtotal: 0 };
-      }
-      processedMap[itemKey][i.depot] += Number(i.qty || 0);
-      processedMap[itemKey].subtotal += Number(i.qty || 0);
-    });
+  const container = document.getElementById('matrixLayoutEngine');
+  const distinctCategories = ['Sales Tool', 'Promotional Item', 'Give-Away', 'Asset', 'Old Sales Tool'];
+  
+  container.innerHTML = distinctCategories.map(cat => {
+    const styleCfg = CATEGORY_STYLES[cat];
+    let poolItems = inventory.filter(i => i.category === cat);
+    if(currentChannelFilter !== 'all') poolItems = poolItems.filter(i => i.depot === currentChannelFilter);
+    
+    const processedMap = {};
+    poolItems.forEach(i => {
+      const itemKey = i.name.trim();
+      if(!processedMap[itemKey]){
+        processedMap[itemKey] = { name: itemKey, 'HQ': 0, 'South Depot': 0, 'North Depot': 0, 'CTG Depot': 0, 'Outside Dhaka': 0, subtotal: 0 };
+      }
+      processedMap[itemKey][i.depot] += Number(i.qty || 0);
+      processedMap[itemKey].subtotal += Number(i.qty || 0);
+    });
 
-    const outputRows = Object.values(processedMap);
-    let trContent = outputRows.map(r => {
-      const imgSrc = SKU_IMAGE_MAP[r.name] || SKU_IMAGE_MAP['default'];
-      
-      return `
-        <tr>
-          <td>
-            <div class="cell-name-wrapper">
-              <div class="sku-meta-inline">
-                <img src="${imgSrc}" class="sku-img-preview" alt="${escapeHtml(r.name)}" crossorigin="anonymous" />
-                <span>${escapeHtml(r.name)}</span>
-              </div>
-              <button class="item-delete-inline-btn" onclick="deleteSegmentItem('${escapeHtml(r.name)}', '${cat}')">🗑️</button>
-            </div>
-          </td>
-          <td>${r['HQ'] || ''}</td><td>${r['South Depot'] || ''}</td><td>${r['North Depot'] || ''}</td><td>${r['CTG Depot'] || ''}</td><td>${r['Outside Dhaka'] || ''}</td>
-          <td class="item-total-col">${r.subtotal}</td>
-        </tr>
-      `;
-    }).join('');
+    const outputRows = Object.values(processedMap);
+    let trContent = outputRows.map(r => {
+      const imgSrc = SKU_IMAGE_MAP[r.name] || SKU_IMAGE_MAP['default'];
+      
+      return `
+        <tr>
+          <td>
+            <div class="cell-name-wrapper">
+              <div class="sku-meta-inline">
+                <img src="${imgSrc}" class="sku-img-preview" alt="${escapeHtml(r.name)}" crossorigin="anonymous" />
+                <span>${escapeHtml(r.name)}</span>
+              </div>
+              <button class="item-delete-inline-btn" onclick="deleteSegmentItem('${escapeHtml(r.name)}', '${cat}')">🗑️</button>
+            </div>
+          </td>
+          <td>${r['HQ'] || ''}</td><td>${r['South Depot'] || ''}</td><td>${r['North Depot'] || ''}</td><td>${r['CTG Depot'] || ''}</td><td>${r['Outside Dhaka'] || ''}</td>
+          <td class="item-total-col">${r.subtotal}</td>
+        </tr>
+      `;
+    }).join('');
 
-    if(outputRows.length === 0) trContent = `<tr><td style="color:var(--ink-soft); font-style:italic;">No active assets in this filter</td><td></td><td></td><td></td><td></td><td></td><td class="item-total-col">-</td></tr>`;
+    if(outputRows.length === 0) trContent = `<tr><td style="color:var(--ink-soft); font-style:italic;">No active assets in this filter</td><td></td><td></td><td></td><td></td><td></td><td class="item-total-col">-</td></tr>`;
 
-    return `
-      <div class="cat-group-segment ${styleCfg.class}">
-        <div class="cat-header-label-badge">${cat}</div>
-        <table class="matrix-data-table">
-          <thead><tr><th>Item Segment Name</th><th>HQ</th><th>South Depot</th><th>North Depot</th><th>CTG Depot</th><th>Outside Dhaka</th><th>Item Total</th></tr></thead>
-          <tbody>${trContent}</tbody>
-        </table>
-      </div>`;
-  }).join('');
+    return `
+      <div class="cat-group-segment ${styleCfg.class}">
+        <div class="cat-header-label-badge">${cat}</div>
+        <table class="matrix-data-table">
+          <thead><tr><th>Item Segment Name</th><th>HQ</th><th>South Depot</th><th>North Depot</th><th>CTG Depot</th><th>Outside Dhaka</th><th>Item Total</th></tr></thead>
+          <tbody>${trContent}</tbody>
+        </table>
+      </div>`;
+  }).join('');
 }
 
 function deleteSegmentItem(itemName, category) {
-  if(!isAdmin) return;
-  if (confirm(`Delete "${itemName}"?`)) {
-    inventory = inventory.filter(i => !(i.name.trim() === itemName.trim() && i.category === category));
-    saveToLocalStorage();
-    renderAll();
-  }
+  if(!isAdmin) return;
+  if (confirm(`Delete "${itemName}"?`)) {
+    inventory = inventory.filter(i => !(i.name.trim() === itemName.trim() && i.category === category));
+    saveToLocalStorage();
+    renderAll();
+  }
 }
 
 document.getElementById('addForm').addEventListener('submit', (e) => {
-  e.preventDefault();
-  if(!isAdmin) return;
-  const name = document.getElementById('f-name').value.trim();
-  const category = document.getElementById('f-category').value;
-  const depot = document.getElementById('f-depot').value;
-  const qty = Number(document.getElementById('f-qty').value) || 0;
-  const condition = document.getElementById('f-condition').value;
+  e.preventDefault();
+  if(!isAdmin) return;
+  const name = document.getElementById('f-name').value.trim();
+  const category = document.getElementById('f-category').value;
+  const depot = document.getElementById('f-depot').value;
+  const qty = Number(document.getElementById('f-qty').value) || 0;
+  const condition = document.getElementById('f-condition').value;
 
-  inventory.push({ id: 'item-' + Date.now(), name, category, depot, qty, condition });
-  document.getElementById('f-name').value = '';
-  document.getElementById('f-qty').value = '1';
-  saveToLocalStorage();
-  renderAll();
+  inventory.push({ id: 'item-' + Date.now(), name, category, depot, qty, condition });
+  document.getElementById('f-name').value = '';
+  document.getElementById('f-qty').value = '1';
+  saveToLocalStorage();
+  renderAll();
 });
 
 function handleBulkExcelUpload(event) {
-  if(!isAdmin) return;
-  const file = event.target.files[0]; if (!file) return;
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    try {
-      const data = new Uint8Array(e.target.result);
-      const workbook = XLSX.read(data, { type: 'array' });
-      const rawRows = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
-      if (!rawRows.length) return;
+  if(!isAdmin) return;
+  const file = event.target.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const data = new Uint8Array(e.target.result);
+      const workbook = XLSX.read(data, { type: 'array' });
+      const rawRows = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
+      if (!rawRows.length) return;
 
-      rawRows.forEach(row => {
-        let name = row['Item Name'] || row['Name'] || row['item name'];
-        let category = row['Category'] || row['category'] || 'Sales Tool';
-        let depot = row['Depot'] || row['depot'] || 'HQ';
-        let qty = row['Qty'] || row['quantity'] || 0;
-        let condition = row['Condition'] || 'New';
+      rawRows.forEach(row => {
+        let name = row['Item Name'] || row['Name'] || row['item name'];
+        let category = row['Category'] || row['category'] || 'Sales Tool';
+        let depot = row['Depot'] || row['depot'] || 'HQ';
+        let qty = row['Qty'] || row['quantity'] || 0;
+        let condition = row['Condition'] || 'New';
 
-        if(name) {
-          inventory.push({
-            id: 'bulk-' + Math.random().toString(36).substring(2,7),
-            name: name.toString().trim(),
-            category: category.toString().trim(),
-            depot: depot.toString().trim(),
-            qty: Number(qty),
-            condition: condition.toString().trim()
-          });
-        }
-      });
-      saveToLocalStorage();
-      renderAll();
-      alert('Excel items merged into session storage successfully.');
-    } catch(err) { alert("Excel formatting error."); }
-  };
-  reader.readAsArrayBuffer(file);
+        if(name) {
+          inventory.push({
+            id: 'bulk-' + Math.random().toString(36).substring(2,7),
+            name: name.toString().trim(),
+            category: category.toString().trim(),
+            depot: depot.toString().trim(),
+            qty: Number(qty) || 0,
+            condition: condition.toString().trim()
+          });
+        }
+      });
+      saveToLocalStorage();
+      renderAll();
+      alert('Excel items merged into session storage successfully.');
+    } catch(err) { alert("Excel formatting error."); }
+  };
+  reader.readAsArrayBuffer(file);
 }
 
 function escapeHtml(str){ const div = document.createElement('div'); div.textContent = str; return div.innerHTML; }
 
 document.getElementById('chips').addEventListener('click', (e) => {
-  const chip = e.target.closest('.chip'); if(!chip) return;
-  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
-  chip.classList.add('active'); currentChannelFilter = chip.dataset.filter;
-  calculateCounters(); renderDashboardMatrix();
+  const chip = e.target.closest('.chip'); if(!chip) return;
+  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+  chip.classList.add('active'); currentChannelFilter = chip.dataset.filter;
+  calculateCounters(); renderDashboardMatrix();
 });
 
 function exportToExcel(){
-  const wb = XLSX.utils.book_new();
-  const ws = XLSX.utils.json_to_sheet(inventory.map(i=>({'Item Name':i.name,'Category':i.category,'Depot':i.depot,'Qty':i.qty,'Condition':i.condition})));
-  XLSX.utils.book_append_sheet(wb, ws, 'Inventory');
-  XLSX.writeFile(wb, "Ajinomoto_Inventory_Matrix.xlsx");
+  const wb = XLSX.utils.book_new();
+  const ws = XLSX.utils.json_to_sheet(inventory.map(i=>({'Item Name':i.name,'Category':i.category,'Depot':i.depot,'Qty':i.qty,'Condition':i.condition})));
+  XLSX.utils.book_append_sheet(wb, ws, 'Inventory');
+  XLSX.writeFile(wb, "Ajinomoto_Inventory_Matrix.xlsx");
 }
 
 function exportToJPG() {
-  const previews = document.querySelectorAll('.sku-img-preview');
-  previews.forEach(img => img.classList.add('no-hover'));
+  const previews = document.querySelectorAll('.sku-img-preview');
+  previews.forEach(img => img.classList.add('no-hover'));
 
-  setTimeout(() => {
-    html2canvas(document.getElementById('dashboardSnapshotArea'), { 
-      scale: 2, 
-      backgroundColor: '#EFE7D8', 
-      useCORS: true,
-      logging: false
-    }).then(canvas => {
-      const a = document.createElement('a'); 
-      a.href = canvas.toDataURL('image/jpeg', 0.95); 
-      a.download = `Ajinomoto_Dashboard_Snapshot.jpg`; 
-      a.click();
-      
-      previews.forEach(img => img.classList.remove('no-hover'));
-    });
-  }, 50);
+  setTimeout(() => {
+    html2canvas(document.getElementById('dashboardSnapshotArea'), { 
+      scale: 2, 
+      backgroundColor: '#EFE7D8', 
+      useCORS: true,
+      logging: false
+    }).then(canvas => {
+      const a = document.createElement('a'); 
+      a.href = canvas.toDataURL('image/jpeg', 0.95); 
+      a.download = `Ajinomoto_Dashboard_Snapshot.jpg`; 
+      a.click();
+      
+      previews.forEach(img => img.classList.remove('no-hover'));
+    });
+  }, 50);
 }
 
 checkAuthSecurity();
