@@ -113,17 +113,18 @@
     border-radius: 4px;
   }
 
+  /* Grid alignment set to stretch so all cards take equal height */
   .top-counters {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     gap: 12px;
-    align-items: start;
+    align-items: stretch;
   }
   @media (max-width: 1200px) { .top-counters { grid-template-columns: repeat(3, 1fr); } }
   @media (max-width: 768px) { .top-counters { grid-template-columns: repeat(2, 1fr); } }
   @media (max-width: 480px) { .top-counters { grid-template-columns: 1fr; } }
   
-  /* Auto Height adjustments for Counter Cards */
+  /* Counter Box expands naturally based on the largest card */
   .counter-box {
     background: var(--paper-light);
     border: 1px solid var(--line);
@@ -135,8 +136,7 @@
     gap: 12px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.02);
     border-left: 5px solid var(--ink);
-    min-height: 180px;
-    height: auto;
+    height: 100%;
   }
   .counter-box.sales-tool { border-left-color: var(--color-sales-tool); }
   .counter-box.promo { border-left-color: var(--color-promo); }
@@ -148,7 +148,6 @@
   .counter-title { font-family: 'Oswald', sans-serif; font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--ink-soft); }
   .counter-value { font-family: 'IBM Plex Mono', monospace; font-size: 26px; font-weight: 700; color: var(--ink); }
 
-  /* Removed max-height restriction so contents expand box naturally */
   .inner-sub-metrics {
     display: flex;
     flex-wrap: wrap;
@@ -156,6 +155,7 @@
     border-top: 1px dashed var(--line);
     padding-top: 8px;
     margin-top: auto;
+    align-content: flex-start;
   }
 
   .sub-metric-item {
@@ -367,7 +367,7 @@ const SKU_IMAGE_MAP = {
   'Aji-Hanger': 'https://i.postimg.cc/Y2fbf0nc/Aji-Hanger.png',
   'Hapima Hanger': 'https://i.postimg.cc/xdt4RCj4/Hapima-Hanger.png',
   'Invoice': 'https://i.postimg.cc/D0DGHjHk/Invoice.jpg',
-  'Hand Bag-Old': 'https://i.postimg.cc/PxH5mSJx/Hand-Bag.png',
+  'Hand Bag': 'https://i.postimg.cc/PxH5mSJx/Hand-Bag.png',
   'Refrigerator': 'https://i.postimg.cc/4xhzpgM5/Refrigaretor.png',
   'Monitor': 'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=100&auto=format&fit=crop&q=60',
   'Aji-Sticker': 'https://i.postimg.cc/d1gdSNgz/Aji-Sticker.jpg',
