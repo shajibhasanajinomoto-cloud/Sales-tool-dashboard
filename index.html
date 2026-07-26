@@ -407,15 +407,27 @@ function loadInitialData() {
     skipEmptyLines: true,
     complete: function(results) {
       if (results.data && results.data.length > 0) {
-        inventory = results.data.map((row, idx) => ({
-          id: row.id || `gs-${idx}`,
-          name: row.name ? row.name.trim() : '',
-          category: row.category ? row.category.trim() : 'Sales Tool',
-          depot: row.depot ? row.depot.trim() : 'HQ',
-          qty: Number(row.qty) || 0,
-          condition: row.condition ? row.condition.trim() : 'New'
-        })).filter(i => i.name !== '');
+        inventory = results.data.map((rawRow, idx) => {
+          // Normalize keys to lowercase so header casing in the sheet
+          // (e.g. "Id", "Name" vs "id", "name") never breaks the mapping.
+          // Previously this required exact lowercase headers, and any
+          // capitalized header (like "Name") meant every row's name came
+          // out empty and got silently filtered out - i.e. no data synced.
+          const row = {};
+          Object.keys(rawRow).forEach(k => { row[k.trim().toLowerCase()] = rawRow[k]; });
+
+          return {
+            id: row.id || `gs-${idx}`,
+            name: row.name ? String(row.name).trim() : '',
+            category: row.category ? String(row.category).trim() : 'Sales Tool',
+            depot: row.depot ? String(row.depot).trim() : 'HQ',
+            qty: Number(row.qty) || 0,
+            condition: row.condition ? String(row.condition).trim() : 'New'
+          };
+        }).filter(i => i.name !== '');
         renderAll();
+      } else {
+        console.warn('Google Sheet CSV loaded but returned no rows - check GOOGLE_SHEET_CSV_URL and sheet publish settings.');
       }
     },
     error: function(err) {
