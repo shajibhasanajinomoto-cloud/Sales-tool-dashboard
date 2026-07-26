@@ -6,6 +6,8 @@
 <title>Sales Tool Dashboard with SKU Images</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<!-- PapaParse for smooth CSV Fetching -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
 
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
@@ -221,7 +223,9 @@
     z-index: 1;
   }
 
-  .matrix-data-table tr:hover { z-index: 10; }
+  .matrix-data-table tr:hover {
+    z-index: 10;
+  }
 
   @media (hover: hover) {
     .sku-img-preview:not(.no-hover):hover {
@@ -348,10 +352,12 @@
     </section>
   </div>
 
-  <div class="footnote">Ajinomoto Analytics Log · Data Mode: Hardcoded Static Engine with Asset Previews</div>
+  <div class="footnote">Ajinomoto Analytics Log · Data Source: Live Google Sheet Connected</div>
 </div>
 
 <script>
+const GOOGLE_SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ9GoPrulzLJxwyAcWBzln74yZ-4RE6ECZTouz0Qns6DYbJXF8BFHueEv4OBGA6bMzlRgybtoqzNKe3/pub?output=csv';
+
 const SKU_IMAGE_MAP = {
   'Uniform': 'https://i.postimg.cc/XJj9CydF/Uniform.jpg',
   'Uniform-BP': 'https://i.postimg.cc/FRHxsV4B/BP-Uniform.png',
@@ -365,32 +371,9 @@ const SKU_IMAGE_MAP = {
   'Refrigerator': 'https://i.postimg.cc/4xhzpgM5/Refrigaretor.png',
   'Monitor': 'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=100&auto=format&fit=crop&q=60',
   'Aji-Sticker': 'https://i.postimg.cc/d1gdSNgz/Aji-Sticker.jpg',
+  'Aji-leaflet': 'https://i.postimg.cc/2jh8HRvX/Whats-App-Image-2026-06-17-at-2-46-29-PM-removebg-preview.png',
   'default': 'https://images.unsplash.com/photo-1531403009284-440f080d1e12?w=100&auto=format&fit=crop&q=60'
 };
-
-const HARDCODED_INVENTORY_DATA = [
-  { id: "e1", name: "Uniform", category: "Sales Tool", depot: "HQ", qty: 39, condition: "New" },
-  { id: "e2", name: "Uniform-BP", category: "Sales Tool", depot: "HQ", qty: 88, condition: "New" },
-  { id: "e4", name: "Aji-Sticker", category: "Old Sales Tool", depot: "South Depot", qty: 2150, condition: "Unused" },
-  { id: "e5", name: "Hand Bag", category: "Sales Tool", depot: "HQ", qty: 12, condition: "Unused" },
-  { id: "e6", name: "Shirt", category: "Promotional Item", depot: "HQ", qty: 35, condition: "Unused" },
-  { id: "e7", name: "T-Shirt", category: "Promotional Item", depot: "HQ", qty: 21, condition: "Unused" },
-  { id: "e8", name: "Aji-Sticker", category: "Old Sales Tool", depot: "HQ", qty: 2460, condition: "Unused" },
-  { id: "e10", name: "Aji-Hanger", category: "Old Sales Tool", depot: "HQ", qty: 1835, condition: "Unused" },
-  { id: "e12", name: "Hapima Hanger", category: "Old Sales Tool", depot: "HQ", qty: 355, condition: "Unused" },
-  { id: "e13", name: "Monitor", category: "Asset", depot: "South Depot", qty: 1, condition: "Unused" },
-  { id: "e14", name: "Refrigerator", category: "Asset", depot: "South Depot", qty: 1, condition: "Unused" },
-  { id: "e15", name: "Invoice", category: "Sales Tool", depot: "Outside Dhaka", qty: 273, condition: "New" },
-  { id: "e16", name: "Invoice", category: "Sales Tool", depot: "CTG Depot", qty: 2, condition: "New" },
-  { id: "e17", name: "Invoice", category: "Sales Tool", depot: "North Depot", qty: 4, condition: "New" },
-  { id: "e18", name: "Invoice", category: "Sales Tool", depot: "South Depot", qty: 2, condition: "New" },
-  { id: "e19", name: "Invoice", category: "Sales Tool", depot: "HQ", qty: 15, condition: "New" },
-  { id: "e20", name: "Aji-Paper Hanger", category: "Sales Tool", depot: "Outside Dhaka", qty: 481, condition: "New" },
-  { id: "e21", name: "Aji-Paper Hanger", category: "Sales Tool", depot: "CTG Depot", qty: 12, condition: "New" },
-  { id: "e22", name: "Aji-Paper Hanger", category: "Sales Tool", depot: "North Depot", qty: 10, condition: "New" },
-  { id: "e23", name: "Aji-Paper Hanger", category: "Sales Tool", depot: "South Depot", qty: 70, condition: "New" },
-  { id: "e24", name: "Aji-Paper Hanger", category: "Sales Tool", depot: "HQ", qty: 2740, condition: "New" }
-];
 
 const CATEGORY_STYLES = {
   'Sales Tool': { class: 'segment-sales-tool' },
@@ -405,6 +388,11 @@ let currentChannelFilter = 'all';
 let isAdmin = false;
 
 function checkAuthSecurity() {
+  // NOTE: This is a client-side-only convenience toggle, NOT real security.
+  // Anyone who adds ?auth=admin to the URL can enable admin mode, since all
+  // logic runs in the browser with no server-side check. Do not rely on this
+  // for protecting real data - deletions only affect this browser's local
+  // session and are not written back to the Google Sheet.
   const urlParams = new URLSearchParams(window.location.search);
   if (urlParams.get('auth') === 'admin') {
     isAdmin = true;
@@ -413,17 +401,27 @@ function checkAuthSecurity() {
 }
 
 function loadInitialData() {
-  const localSaved = localStorage.getItem('ajinomoto_local_inv');
-  if (localSaved) {
-    inventory = JSON.parse(localSaved);
-  } else {
-    inventory = [...HARDCODED_INVENTORY_DATA];
-  }
-  renderAll();
-}
-
-function saveToLocalStorage() {
-  localStorage.setItem('ajinomoto_local_inv', JSON.stringify(inventory));
+  Papa.parse(GOOGLE_SHEET_CSV_URL, {
+    download: true,
+    header: true,
+    skipEmptyLines: true,
+    complete: function(results) {
+      if (results.data && results.data.length > 0) {
+        inventory = results.data.map((row, idx) => ({
+          id: row.id || `gs-${idx}`,
+          name: row.name ? row.name.trim() : '',
+          category: row.category ? row.category.trim() : 'Sales Tool',
+          depot: row.depot ? row.depot.trim() : 'HQ',
+          qty: Number(row.qty) || 0,
+          condition: row.condition ? row.condition.trim() : 'New'
+        })).filter(i => i.name !== '');
+        renderAll();
+      }
+    },
+    error: function(err) {
+      console.error("Error fetching Google Sheet CSV:", err);
+    }
+  });
 }
 
 function renderAll(){
@@ -437,7 +435,11 @@ function calculateCounters(){
   
   inventory.forEach(i => {
     if (currentChannelFilter === 'all' || i.depot === currentChannelFilter) {
-      if (catTotals[i.category] !== undefined) catTotals[i.category] += Number(i.qty || 0);
+      if (catTotals[i.category] !== undefined) {
+        catTotals[i.category] += Number(i.qty || 0);
+      } else {
+        console.warn(`Unrecognized category "${i.category}" for item "${i.name}" - skipped from counters.`);
+      }
       const itemName = i.name.trim();
       if (dynamicSubMaps[i.category]) {
         if (!dynamicSubMaps[i.category][itemName]) dynamicSubMaps[i.category][itemName] = 0;
@@ -486,7 +488,11 @@ function renderDashboardMatrix(){
       if(!processedMap[itemKey]){
         processedMap[itemKey] = { name: itemKey, 'HQ': 0, 'South Depot': 0, 'North Depot': 0, 'CTG Depot': 0, 'Outside Dhaka': 0, subtotal: 0 };
       }
-      processedMap[itemKey][i.depot] += Number(i.qty || 0);
+      if (Object.prototype.hasOwnProperty.call(processedMap[itemKey], i.depot)) {
+        processedMap[itemKey][i.depot] += Number(i.qty || 0);
+      } else {
+        console.warn(`Unrecognized depot "${i.depot}" for item "${i.name}" - qty still counted in Item Total, but not shown in a depot column.`);
+      }
       processedMap[itemKey].subtotal += Number(i.qty || 0);
     });
 
@@ -499,10 +505,10 @@ function renderDashboardMatrix(){
           <td>
             <div class="cell-name-wrapper">
               <div class="sku-meta-inline">
-                <img src="${imgSrc}" class="sku-img-preview" alt="${escapeHtml(r.name)}" crossorigin="anonymous" />
+                <img src="${imgSrc}" class="sku-img-preview" alt="${escapeHtml(r.name)}" crossorigin="anonymous" onerror="this.onerror=null;this.src='${SKU_IMAGE_MAP['default']}';" />
                 <span>${escapeHtml(r.name)}</span>
               </div>
-              <button class="item-delete-inline-btn" onclick="deleteSegmentItem('${escapeHtml(r.name)}', '${cat}')">🗑️</button>
+              <button class="item-delete-inline-btn" data-item-name="${escapeHtml(r.name)}" data-item-cat="${escapeHtml(cat)}" onclick="deleteSegmentItemFromBtn(this)">🗑️</button>
             </div>
           </td>
           <td>${r['HQ'] || ''}</td><td>${r['South Depot'] || ''}</td><td>${r['North Depot'] || ''}</td><td>${r['CTG Depot'] || ''}</td><td>${r['Outside Dhaka'] || ''}</td>
@@ -524,11 +530,25 @@ function renderDashboardMatrix(){
   }).join('');
 }
 
+function deleteSegmentItemFromBtn(btn) {
+  // Reading via dataset avoids the earlier bug where quotes/apostrophes in
+  // item names could break the inline onclick string.
+  deleteSegmentItem(btn.dataset.itemName, btn.dataset.itemCat);
+}
+
 function deleteSegmentItem(itemName, category) {
   if(!isAdmin) return;
-  if (confirm(`Delete "${itemName}"?`)) {
-    inventory = inventory.filter(i => !(i.name.trim() === itemName.trim() && i.category === category));
-    saveToLocalStorage();
+  const scopeLabel = currentChannelFilter === 'all' ? 'all depots' : currentChannelFilter;
+  if (confirm(`Delete "${itemName}" from ${scopeLabel}?`)) {
+    inventory = inventory.filter(i => {
+      const isMatch = i.name.trim() === itemName.trim() && i.category === category;
+      if (!isMatch) return true;
+      // Previously this deleted the item from every depot even when a
+      // specific depot filter was active. Now it only removes the rows
+      // that belong to the currently selected depot filter.
+      if (currentChannelFilter !== 'all' && i.depot !== currentChannelFilter) return true;
+      return false;
+    });
     renderAll();
   }
 }
@@ -545,7 +565,6 @@ document.getElementById('addForm').addEventListener('submit', (e) => {
   inventory.push({ id: 'item-' + Date.now(), name, category, depot, qty, condition });
   document.getElementById('f-name').value = '';
   document.getElementById('f-qty').value = '1';
-  saveToLocalStorage();
   renderAll();
 });
 
@@ -561,11 +580,11 @@ function handleBulkExcelUpload(event) {
       if (!rawRows.length) return;
 
       rawRows.forEach(row => {
-        let name = row['Item Name'] || row['Name'] || row['item name'];
+        let name = row['Item Name'] || row['Name'] || row['item name'] || row['name'];
         let category = row['Category'] || row['category'] || 'Sales Tool';
         let depot = row['Depot'] || row['depot'] || 'HQ';
-        let qty = row['Qty'] || row['quantity'] || 0;
-        let condition = row['Condition'] || 'New';
+        let qty = row['Qty'] || row['qty'] || row['Quantity'] || row['quantity'] || 0;
+        let condition = row['Condition'] || row['condition'] || 'New';
 
         if(name) {
           inventory.push({
@@ -573,12 +592,11 @@ function handleBulkExcelUpload(event) {
             name: name.toString().trim(),
             category: category.toString().trim(),
             depot: depot.toString().trim(),
-            qty: Number(qty),
+            qty: Number(qty) || 0,
             condition: condition.toString().trim()
           });
         }
       });
-      saveToLocalStorage();
       renderAll();
       alert('Excel items merged into session storage successfully.');
     } catch(err) { alert("Excel formatting error."); }
