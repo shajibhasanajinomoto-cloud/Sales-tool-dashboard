@@ -117,11 +117,13 @@
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     gap: 12px;
+    align-items: start;
   }
   @media (max-width: 1200px) { .top-counters { grid-template-columns: repeat(3, 1fr); } }
   @media (max-width: 768px) { .top-counters { grid-template-columns: repeat(2, 1fr); } }
   @media (max-width: 480px) { .top-counters { grid-template-columns: 1fr; } }
   
+  /* Auto Height adjustments for Counter Cards */
   .counter-box {
     background: var(--paper-light);
     border: 1px solid var(--line);
@@ -133,7 +135,8 @@
     gap: 12px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.02);
     border-left: 5px solid var(--ink);
-    height: 180px;
+    min-height: 180px;
+    height: auto;
   }
   .counter-box.sales-tool { border-left-color: var(--color-sales-tool); }
   .counter-box.promo { border-left-color: var(--color-promo); }
@@ -145,6 +148,7 @@
   .counter-title { font-family: 'Oswald', sans-serif; font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--ink-soft); }
   .counter-value { font-family: 'IBM Plex Mono', monospace; font-size: 26px; font-weight: 700; color: var(--ink); }
 
+  /* Removed max-height restriction so contents expand box naturally */
   .inner-sub-metrics {
     display: flex;
     flex-wrap: wrap;
@@ -152,11 +156,7 @@
     border-top: 1px dashed var(--line);
     padding-top: 8px;
     margin-top: auto;
-    overflow-y: auto;
-    max-height: 85px;
   }
-  .inner-sub-metrics::-webkit-scrollbar { display: none; }
-  .inner-sub-metrics { -ms-overflow-style: none; scrollbar-width: none; }
 
   .sub-metric-item {
     display: flex;
@@ -367,7 +367,7 @@ const SKU_IMAGE_MAP = {
   'Aji-Hanger': 'https://i.postimg.cc/Y2fbf0nc/Aji-Hanger.png',
   'Hapima Hanger': 'https://i.postimg.cc/xdt4RCj4/Hapima-Hanger.png',
   'Invoice': 'https://i.postimg.cc/D0DGHjHk/Invoice.jpg',
-  'Hand Bag-Old': 'https://i.postimg.cc/PxH5mSJx/Hand-Bag.png',
+  'Hand Bag': 'https://i.postimg.cc/PxH5mSJx/Hand-Bag.png',
   'Refrigerator': 'https://i.postimg.cc/4xhzpgM5/Refrigaretor.png',
   'Monitor': 'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=100&auto=format&fit=crop&q=60',
   'Aji-Sticker': 'https://i.postimg.cc/d1gdSNgz/Aji-Sticker.jpg',
@@ -390,11 +390,6 @@ let currentChannelFilter = 'all';
 let isAdmin = false;
 
 function checkAuthSecurity() {
-  // NOTE: This is a client-side-only convenience toggle, NOT real security.
-  // Anyone who adds ?auth=admin to the URL can enable admin mode, since all
-  // logic runs in the browser with no server-side check. Do not rely on this
-  // for protecting real data - deletions only affect this browser's local
-  // session and are not written back to the Google Sheet.
   const urlParams = new URLSearchParams(window.location.search);
   if (urlParams.get('auth') === 'admin') {
     isAdmin = true;
@@ -410,11 +405,6 @@ function loadInitialData() {
     complete: function(results) {
       if (results.data && results.data.length > 0) {
         inventory = results.data.map((rawRow, idx) => {
-          // Normalize keys to lowercase so header casing in the sheet
-          // (e.g. "Id", "Name" vs "id", "name") never breaks the mapping.
-          // Previously this required exact lowercase headers, and any
-          // capitalized header (like "Name") meant every row's name came
-          // out empty and got silently filtered out - i.e. no data synced.
           const row = {};
           Object.keys(rawRow).forEach(k => { row[k.trim().toLowerCase()] = rawRow[k]; });
 
@@ -545,8 +535,6 @@ function renderDashboardMatrix(){
 }
 
 function deleteSegmentItemFromBtn(btn) {
-  // Reading via dataset avoids the earlier bug where quotes/apostrophes in
-  // item names could break the inline onclick string.
   deleteSegmentItem(btn.dataset.itemName, btn.dataset.itemCat);
 }
 
@@ -557,9 +545,6 @@ function deleteSegmentItem(itemName, category) {
     inventory = inventory.filter(i => {
       const isMatch = i.name.trim() === itemName.trim() && i.category === category;
       if (!isMatch) return true;
-      // Previously this deleted the item from every depot even when a
-      // specific depot filter was active. Now it only removes the rows
-      // that belong to the currently selected depot filter.
       if (currentChannelFilter !== 'all' && i.depot !== currentChannelFilter) return true;
       return false;
     });
