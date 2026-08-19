@@ -354,7 +354,16 @@
   }
   .ledger-modal-body{
     padding: 18px 22px 22px;
-    overflow: auto;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+  }
+  .ledger-table-wrap{
+    overflow-y: auto;
+    flex: 1;
+    min-height: 0;
   }
   .ledger-count{
     font-family:'IBM Plex Mono', monospace;
@@ -840,7 +849,7 @@ function renderLedgerTable() {
   const tbody = rows.map(r => '<tr>' + columns.map(c => `<td class="${numericCols.has(c) ? 'ledger-col-num' : ''}">${escapeHtml(String(r[c] ?? ''))}</td>`).join('') + '</tr>').join('');
   body.innerHTML =
     '<div class="ledger-count">' + rows.length + ' record' + (rows.length === 1 ? '' : 's') + '</div>' +
-    '<table class="matrix-data-table ledger-table"><thead>' + thead + '</thead><tbody>' + tbody + '</tbody></table>';
+    '<div class="ledger-table-wrap"><table class="matrix-data-table ledger-table"><thead>' + thead + '</thead><tbody>' + tbody + '</tbody></table></div>';
 }
 
 function exportLedgerToExcel() {
