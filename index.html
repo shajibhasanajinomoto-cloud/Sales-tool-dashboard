@@ -263,6 +263,115 @@
   .admin-only { display: none !important; }
   .admin-mode .admin-only { display: block !important; }
   .admin-mode form.admin-only { display: grid !important; }
+
+  .ledger-btn{
+    position: relative;
+    z-index: 1;
+    font-family:'Oswald', sans-serif;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: 4px;
+    padding: 10px 18px;
+    cursor: pointer;
+    transition: all .15s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: 1.5px solid var(--red-base);
+    background: transparent;
+    color: var(--paper-light);
+  }
+  .ledger-btn:hover{ background: var(--red-base); color: #fff; }
+  .ledger-btn .ico{ font-size: 15px; line-height: 1; }
+
+  .ledger-modal-overlay{
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(20,18,15,0.55);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  .ledger-modal{
+    background: var(--paper-light);
+    border-radius: 6px;
+    width: 100%;
+    max-width: 1100px;
+    max-height: 85vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.35);
+    overflow: hidden;
+  }
+  .ledger-modal-header{
+    background: var(--ink);
+    color: var(--paper-light);
+    padding: 16px 22px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .ledger-modal-header h2{
+    font-family:'Oswald', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 17px;
+    margin: 0;
+  }
+  .ledger-close-btn{
+    background: transparent;
+    border: 1.5px solid rgba(251,247,238,0.4);
+    color: var(--paper-light);
+    border-radius: 4px;
+    width: 30px; height: 30px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  .ledger-close-btn:hover{ background: rgba(251,247,238,0.15); }
+  .ledger-modal-toolbar{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 22px;
+    border-bottom: 1px solid var(--line);
+    flex-wrap: wrap;
+  }
+  .ledger-modal-toolbar input{
+    font-family:'IBM Plex Sans', sans-serif;
+    font-size: 13px;
+    padding: 9px 12px;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    background: #fff;
+    color: var(--ink);
+    outline: none;
+    min-width: 220px;
+    flex: 1;
+  }
+  .ledger-modal-body{
+    padding: 18px 22px 22px;
+    overflow: auto;
+  }
+  .ledger-count{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--ink-soft);
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .ledger-table th{ background-color: var(--ink) !important; position: sticky; top: 0; }
+  .ledger-empty, .ledger-loading{
+    font-family:'IBM Plex Sans', sans-serif;
+    font-size: 13px;
+    color: var(--ink-soft);
+    font-style: italic;
+    padding: 20px 0;
+  }
 </style>
 </head>
 <body>
@@ -273,10 +382,28 @@
       <h1>Ajinomoto Sales Tool Dashboard</h1>
     </div>
     <div class="header-actions">
+      <button class="ledger-btn" onclick="openLedger('purchase')"><span class="ico">🧾</span> Purchase Ledger</button>
+      <button class="ledger-btn" onclick="openLedger('delivery')"><span class="ico">🚚</span> Delivery Ledger</button>
       <button class="jpg-btn" onclick="exportToJPG()">Download JPG</button>
       <button class="export-btn" onclick="exportToExcel()">Export Report</button>
     </div>
   </header>
+
+  <div class="ledger-modal-overlay" id="ledgerOverlay" onclick="if(event.target===this) closeLedgerModal()">
+    <div class="ledger-modal">
+      <div class="ledger-modal-header">
+        <h2 id="ledgerModalTitle">Purchase Ledger</h2>
+        <button class="ledger-close-btn" onclick="closeLedgerModal()">✕</button>
+      </div>
+      <div class="ledger-modal-toolbar">
+        <input type="text" id="ledgerSearchInput" placeholder="Search item, depot, reference…" oninput="renderLedgerTable()" />
+        <button class="export-btn" onclick="exportLedgerToExcel()">Export Excel</button>
+      </div>
+      <div class="ledger-modal-body" id="ledgerModalBody">
+        <p class="ledger-loading">Loading…</p>
+      </div>
+    </div>
+  </div>
 
   <div class="snapshot-target" id="dashboardSnapshotArea">
     <div class="top-counters">
@@ -357,6 +484,13 @@
 
 <script>
 const GOOGLE_SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ9GoPrulzLJxwyAcWBzln74yZ-4RE6ECZTouz0Qns6DYbJXF8BFHueEv4OBGA6bMzlRgybtoqzNKe3/pub?output=csv';
+
+/* Publish two more tabs in your Google Sheet (Purchase register, Delivery register)
+   File > Share > Publish to web > pick the tab > CSV, then paste each link below.
+   Any columns work — a "Date" column (or anything with "date" in the header) is used
+   to sort each ledger newest-first automatically. */
+const PURCHASE_CSV_URL = 'PASTE_YOUR_PURCHASE_SHEET_CSV_LINK_HERE';
+const DELIVERY_CSV_URL = 'PASTE_YOUR_DELIVERY_SHEET_CSV_LINK_HERE';
 
 const SKU_IMAGE_MAP = {
   'Uniform': 'https://i.postimg.cc/XJj9CydF/Uniform.jpg',
@@ -618,6 +752,85 @@ function exportToExcel(){
   const ws = XLSX.utils.json_to_sheet(inventory.map(i=>({'Item Name':i.name,'Category':i.category,'Depot':i.depot,'Qty':i.qty,'Condition':i.condition})));
   XLSX.utils.book_append_sheet(wb, ws, 'Inventory');
   XLSX.writeFile(wb, "Ajinomoto_Inventory_Matrix.xlsx");
+}
+
+let ledgerCache = { purchase: null, delivery: null };
+let ledgerCurrentType = null;
+
+function openLedger(type) {
+  ledgerCurrentType = type;
+  document.getElementById('ledgerModalTitle').textContent = type === 'purchase' ? 'Purchase Ledger' : 'Delivery Ledger';
+  document.getElementById('ledgerSearchInput').value = '';
+  document.getElementById('ledgerOverlay').style.display = 'flex';
+  if (ledgerCache[type]) {
+    renderLedgerTable();
+  } else {
+    document.getElementById('ledgerModalBody').innerHTML = '<p class="ledger-loading">Loading ' + (type === 'purchase' ? 'purchase' : 'delivery') + ' ledger…</p>';
+    fetchLedgerData(type);
+  }
+}
+
+function closeLedgerModal() {
+  document.getElementById('ledgerOverlay').style.display = 'none';
+}
+
+function fetchLedgerData(type) {
+  const url = type === 'purchase' ? PURCHASE_CSV_URL : DELIVERY_CSV_URL;
+  if (!url || url.startsWith('PASTE_')) {
+    const varName = type === 'purchase' ? 'PURCHASE_CSV_URL' : 'DELIVERY_CSV_URL';
+    document.getElementById('ledgerModalBody').innerHTML =
+      '<p class="ledger-empty">No sheet connected yet. Publish your ' + type + ' register tab as CSV (File → Share → Publish to web) and paste the link into <code>' + varName + '</code> near the top of the script.</p>';
+    return;
+  }
+  Papa.parse(url, {
+    download: true,
+    header: true,
+    skipEmptyLines: true,
+    complete: function (results) {
+      ledgerCache[type] = results.data || [];
+      if (ledgerCurrentType === type) renderLedgerTable();
+    },
+    error: function (err) {
+      document.getElementById('ledgerModalBody').innerHTML = '<p class="ledger-empty">Could not load the sheet. Confirm it is published as CSV and the link is correct.</p>';
+      console.error('Ledger CSV fetch error:', err);
+    }
+  });
+}
+
+function guessDateColumn(columns) {
+  return columns.find(c => /date/i.test(c)) || null;
+}
+
+function renderLedgerTable() {
+  const type = ledgerCurrentType;
+  const rawRows = ledgerCache[type] || [];
+  const q = document.getElementById('ledgerSearchInput').value.trim().toLowerCase();
+  const body = document.getElementById('ledgerModalBody');
+  if (!rawRows.length) {
+    body.innerHTML = '<p class="ledger-empty">No records found in this ledger yet.</p>';
+    return;
+  }
+  const columns = Object.keys(rawRows[0]).filter(c => c && c.trim() !== '');
+  const dateCol = guessDateColumn(columns);
+  let rows = rawRows.filter(r => !q || columns.some(c => String(r[c] || '').toLowerCase().includes(q)));
+  if (dateCol) {
+    rows = [...rows].sort((a, b) => new Date(b[dateCol]) - new Date(a[dateCol]));
+  }
+  const thead = '<tr>' + columns.map(c => `<th>${escapeHtml(c)}</th>`).join('') + '</tr>';
+  const tbody = rows.map(r => '<tr>' + columns.map(c => `<td>${escapeHtml(String(r[c] ?? ''))}</td>`).join('') + '</tr>').join('');
+  body.innerHTML =
+    '<div class="ledger-count">' + rows.length + ' record' + (rows.length === 1 ? '' : 's') + '</div>' +
+    '<table class="matrix-data-table ledger-table"><thead>' + thead + '</thead><tbody>' + tbody + '</tbody></table>';
+}
+
+function exportLedgerToExcel() {
+  const type = ledgerCurrentType;
+  const rows = ledgerCache[type] || [];
+  if (!rows.length) { alert('Nothing to export yet.'); return; }
+  const wb = XLSX.utils.book_new();
+  const ws = XLSX.utils.json_to_sheet(rows);
+  XLSX.utils.book_append_sheet(wb, ws, type === 'purchase' ? 'Purchase Ledger' : 'Delivery Ledger');
+  XLSX.writeFile(wb, `Ajinomoto_${type === 'purchase' ? 'Purchase' : 'Delivery'}_Ledger.xlsx`);
 }
 
 function exportToJPG() {
