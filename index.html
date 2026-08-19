@@ -367,9 +367,10 @@
   .ledger-table th { background-color: var(--ink) !important; position: sticky; top: 0; }
   /* Ledger table has a different column shape than the depot matrix table above,
      so override the generic first-column/centering rules with sane defaults. */
-  .ledger-table th, .ledger-table td { width: auto; text-align: left; }
-  .ledger-table th:first-child, .ledger-table td:first-child { width: auto; font-weight: 500; }
-  .ledger-table th.ledger-col-num, .ledger-table td.ledger-col-num { text-align: right; }
+  .ledger-modal .ledger-table th, .ledger-modal .ledger-table td { width: auto; text-align: left; }
+  .ledger-modal .ledger-table th:first-child, .ledger-modal .ledger-table td:first-child { width: auto; font-weight: 500; white-space: nowrap; }
+  .ledger-modal .ledger-table th:not(:first-child), .ledger-modal .ledger-table td:not(:first-child) { width: auto; text-align: left; }
+  .ledger-modal .ledger-table th.ledger-col-num, .ledger-modal .ledger-table td.ledger-col-num { text-align: right; }
   .ledger-empty, .ledger-loading{
     font-family:'IBM Plex Sans', sans-serif;
     font-size: 13px;
