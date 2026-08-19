@@ -338,7 +338,8 @@
     gap: 12px;
     padding: 14px 22px;
     border-bottom: 1px solid var(--line);
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+    flex-shrink: 0;
   }
   .ledger-modal-toolbar input{
     font-family:'IBM Plex Sans', sans-serif;
@@ -349,8 +350,12 @@
     background: #fff;
     color: var(--ink);
     outline: none;
-    min-width: 220px;
-    flex: 1;
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+  .ledger-modal-toolbar .export-btn{
+    flex-shrink: 0;
+    white-space: nowrap;
   }
   .ledger-modal-body{
     padding: 18px 22px 22px;
