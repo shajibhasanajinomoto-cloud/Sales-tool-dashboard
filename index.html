@@ -782,19 +782,28 @@ function fetchLedgerData(type) {
       '<p class="ledger-empty">No sheet connected yet. Publish your ' + type + ' register tab as CSV (File → Share → Publish to web) and paste the link into <code>' + varName + '</code> near the top of the script.</p>';
     return;
   }
-  Papa.parse(url, {
-    download: true,
-    header: true,
-    skipEmptyLines: true,
-    complete: function (results) {
+  fetch(url)
+    .then(res => {
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      return res.text();
+    })
+    .then(csvText => {
+      // Google Sheets sometimes has a blank spacer row above the real headers.
+      // Drop any leading line(s) that contain nothing but commas/whitespace so
+      // Papa Parse picks up the true header row instead of the blank one.
+      const lines = csvText.split(/\r\n|\n|\r/);
+      while (lines.length && /^[\s,]*$/.test(lines[0])) {
+        lines.shift();
+      }
+      const cleanedCsv = lines.join('\n');
+      const results = Papa.parse(cleanedCsv, { header: true, skipEmptyLines: true });
       ledgerCache[type] = results.data || [];
       if (ledgerCurrentType === type) renderLedgerTable();
-    },
-    error: function (err) {
+    })
+    .catch(err => {
       document.getElementById('ledgerModalBody').innerHTML = '<p class="ledger-empty">Could not load the sheet. Confirm it is published as CSV and the link is correct.</p>';
       console.error('Ledger CSV fetch error:', err);
-    }
-  });
+    });
 }
 
 function guessDateColumn(columns) {
