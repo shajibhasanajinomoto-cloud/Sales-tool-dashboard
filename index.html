@@ -364,7 +364,12 @@
     text-transform: uppercase;
     letter-spacing: 1px;
   }
-  .ledger-table th{ background-color: var(--ink) !important; position: sticky; top: 0; }
+  .ledger-table th { background-color: var(--ink) !important; position: sticky; top: 0; }
+  /* Ledger table has a different column shape than the depot matrix table above,
+     so override the generic first-column/centering rules with sane defaults. */
+  .ledger-table th, .ledger-table td { width: auto; text-align: left; }
+  .ledger-table th:first-child, .ledger-table td:first-child { width: auto; font-weight: 500; }
+  .ledger-table th.ledger-col-num, .ledger-table td.ledger-col-num { text-align: right; }
   .ledger-empty, .ledger-loading{
     font-family:'IBM Plex Sans', sans-serif;
     font-size: 13px;
@@ -823,10 +828,15 @@ function renderLedgerTable() {
   const dateCol = guessDateColumn(columns);
   let rows = rawRows.filter(r => !q || columns.some(c => String(r[c] || '').toLowerCase().includes(q)));
   if (dateCol) {
-    rows = [...rows].sort((a, b) => new Date(b[dateCol]) - new Date(a[dateCol]));
+    rows = [...rows].sort((a, b) => new Date(a[dateCol]) - new Date(b[dateCol]));
   }
-  const thead = '<tr>' + columns.map(c => `<th>${escapeHtml(c)}</th>`).join('') + '</tr>';
-  const tbody = rows.map(r => '<tr>' + columns.map(c => `<td>${escapeHtml(String(r[c] ?? ''))}</td>`).join('') + '</tr>').join('');
+  const numericCols = new Set(columns.filter(c => {
+    const vals = rawRows.map(r => String(r[c] ?? '').trim()).filter(v => v !== '');
+    if (!vals.length) return false;
+    return vals.every(v => /^-?[\d,]+(\.\d+)?$/.test(v));
+  }));
+  const thead = '<tr>' + columns.map(c => `<th class="${numericCols.has(c) ? 'ledger-col-num' : ''}">${escapeHtml(c)}</th>`).join('') + '</tr>';
+  const tbody = rows.map(r => '<tr>' + columns.map(c => `<td class="${numericCols.has(c) ? 'ledger-col-num' : ''}">${escapeHtml(String(r[c] ?? ''))}</td>`).join('') + '</tr>').join('');
   body.innerHTML =
     '<div class="ledger-count">' + rows.length + ' record' + (rows.length === 1 ? '' : 's') + '</div>' +
     '<table class="matrix-data-table ledger-table"><thead>' + thead + '</thead><tbody>' + tbody + '</tbody></table>';
